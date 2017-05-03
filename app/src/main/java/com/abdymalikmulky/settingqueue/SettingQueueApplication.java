@@ -3,7 +3,6 @@ package com.abdymalikmulky.settingqueue;
 import android.app.Application;
 import android.content.res.Configuration;
 
-import com.abdymalikmulky.settingqueue.network.NetworkModule;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import timber.log.Timber;
@@ -14,8 +13,6 @@ import timber.log.Timber;
  */
 
 public class SettingQueueApplication extends Application{
-
-    private AppComponent appComponent;
 
     private static SettingQueueApplication instance;
 
@@ -30,17 +27,6 @@ public class SettingQueueApplication extends Application{
 
         FlowManager.init(this);
         Timber.plant(new Timber.DebugTree());
-        appComponent = initDagger(this);
-    }
-
-    public AppComponent getAppComponent() {
-        return appComponent;
-    }
-    protected  AppComponent initDagger(SettingQueueApplication application){
-        return DaggerAppComponent.builder()
-                .appModule(new AppModule(application))
-                .networkModule(new NetworkModule())
-                .build();
     }
 
     // Called by the system when the device configuration changes while your component is running.

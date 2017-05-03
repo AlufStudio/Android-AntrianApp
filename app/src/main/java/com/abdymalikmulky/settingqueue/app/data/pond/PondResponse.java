@@ -32,4 +32,11 @@ public class PondResponse {
         this.users = users;
     }
 
+    @Override
+    public String toString() {
+        return "PondResponse{" +
+                "ponds=" + ponds +
+                ", users=" + users +
+                '}';
+    }
 }

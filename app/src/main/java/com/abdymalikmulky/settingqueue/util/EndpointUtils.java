@@ -7,10 +7,10 @@ package com.abdymalikmulky.settingqueue.util;
 public class EndpointUtils {
 
     //BASE URL
-    public static final String BASE_URL = "http://192.168.0.6:3000/";
+    public static final String BASE_URL = "http://192.168.0.6:3000";
 
     //LIST BERITA
-    public static final String ENDPOINT_LIST_POND = "feed-pond.json/";
+    public static final String ENDPOINT_LIST_POND = "/feed-pond.json/";
 
 
     //KEY

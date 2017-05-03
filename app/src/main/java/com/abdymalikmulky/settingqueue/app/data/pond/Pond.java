@@ -13,7 +13,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 public class Pond extends BaseModel{
 
     @Column
-    @PrimaryKey
+    @PrimaryKey(autoincrement = true)
     @SerializedName("id")
     @Expose
     private int id;

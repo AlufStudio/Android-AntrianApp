@@ -11,6 +11,9 @@ import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Bismillahirrahmanirrahim
@@ -18,7 +21,7 @@ import java.util.ArrayList;
  */
 
 public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
-    private ArrayList<Pond> ponds;
+    private List<Pond> ponds = new ArrayList<>();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgPond;
@@ -62,6 +65,18 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public void replace(List<Pond> ponds){
+        Timber.d("DataSuccess : %s",ponds.toString());
+        this.ponds = ponds;
+        notifyDataSetChanged();
+    }
+
+    public void add(Pond pond){
+        ponds.add(0, pond);
+
+        notifyDataSetChanged();
     }
 }
 
