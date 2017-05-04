@@ -8,13 +8,19 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.abdymalikmulky.settingqueue.R;
+import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
+import com.abdymalikmulky.settingqueue.app.job.PostPondJob;
+import com.birbit.android.jobqueue.JobManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class PondActivity extends AppCompatActivity implements PondContract.View{
+
+    JobManager jobManager;
+
 
     PondAdapter pondAdapter;
     RecyclerView rvPond;
@@ -25,6 +31,10 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        jobManager = SettingQueueApplication.get().getJobManager();
+
+
         initRv();
         mPondPresenter = new PondPresenter(this);
         mPondPresenter.loadPonds();
@@ -41,6 +51,13 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     }
 
     public void addPond(View view){
+//        Pond pond = new Pond();
+//        pond.setId(1);
+//        pond.setName("Pond New");
+//        pond.setClientId("lalala-yeyeye-lalalala-yeyeyeye");
+        jobManager.addJobInBackground(new PostPondJob("text"));
+
+
         int  idRand = new Random().nextInt(50) + 1;
         Pond pond = new Pond();
         pond.setName("Pond "+idRand);

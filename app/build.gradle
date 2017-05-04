@@ -40,9 +40,12 @@ dependencies {
     compile "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpLoggingVersion"
 
     //database
-    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:$rootProject.dbflow_version"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:$rootProject.dbflow_version"
-    compile "com.github.Raizlabs.DBFlow:dbflow:$rootProject.dbflow_version"
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:$rootProject.dbflowVersion"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:$rootProject.dbflowVersion"
+    compile "com.github.Raizlabs.DBFlow:dbflow:$rootProject.dbflowVersion"
+
+    //job queue
+    compile "com.birbit:android-priority-jobqueue:$rootProject.jobqueueVersion"
 
 
     compile 'com.android.support:cardview-v7:25.0.+'
