@@ -40,18 +40,11 @@ ext {
     mockitoVersion = '2.+'
     espressoVersion = '2.2.2'
 
-    picassoVersion = '2.5.2'
-
     gsonVersion = '2.7'
     gsonConverterVersion = '2.0.0'
 
     retrofitVersion = '2.1.0'
     okHttpLoggingVersion = '3.3.1'
-
-    butterknifeVersion = '8.5.1'
-    glashfishAnnotVersion = '10.0-b28'
-
-    realmVersion = '2.2.2'
 
     timberVersion = '4.5.1'
 
@@ -60,4 +53,6 @@ ext {
     dbflowVersion = "4.0.0-beta5"
 
     jobqueueVersion = "2.0.1"
+
+    eventBusVersion = "3.0.0"
 }

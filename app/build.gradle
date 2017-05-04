@@ -47,6 +47,9 @@ dependencies {
     //job queue
     compile "com.birbit:android-priority-jobqueue:$rootProject.jobqueueVersion"
 
+    //event bus
+    compile "org.greenrobot:eventbus:$rootProject.eventBusVersion"
+
 
     compile 'com.android.support:cardview-v7:25.0.+'
     compile 'com.android.support:recyclerview-v7:25.0.+'

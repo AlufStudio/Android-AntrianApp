@@ -1,5 +1,6 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
@@ -29,6 +30,16 @@ public class PondLocal implements PondDataSource {
     public void save(Pond newPond, SavePondCallback callback) {
         Pond pond = new Pond();
         pond = newPond;
+        if(pond.save()){
+            callback.onSaved(pond);
+        }else{
+            callback.onFailed("Fail");
+        }
+    }
+
+    public void updateSyncState(Pond pondUpdate, SavePondCallback callback){
+        Pond pond = pondUpdate;
+        pond.setSyncState(AppUtils.STATE_SYNCED);
         if(pond.save()){
             callback.onSaved(pond);
         }else{

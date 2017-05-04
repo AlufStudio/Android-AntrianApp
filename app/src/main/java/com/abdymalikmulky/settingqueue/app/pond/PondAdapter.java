@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
+import com.abdymalikmulky.settingqueue.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +53,18 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvPondName.setText(ponds.get(position).getName());
-        holder.tvPondUser.setText(String.valueOf(ponds.get(position).getId()));
+        Pond pond = ponds.get(position);
 
+        holder.tvPondName.setText(pond.getName());
+        holder.tvPondUser.setText(String.valueOf(pond.getId()));
+
+        if(pond.getSyncState().equals(AppUtils.STATE_SYNCED)){
+            holder.imgPond.setImageResource(R.mipmap.sync);
+
+        }else{
+            holder.imgPond.setImageResource(R.mipmap.notsync);
+
+        }
     }
 
     @Override
@@ -75,7 +85,6 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
 
     public void add(Pond pond){
         ponds.add(0, pond);
-
         notifyDataSetChanged();
     }
 }

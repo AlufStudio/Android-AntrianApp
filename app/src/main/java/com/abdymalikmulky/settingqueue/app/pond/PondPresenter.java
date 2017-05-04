@@ -6,9 +6,19 @@ import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
+import com.abdymalikmulky.settingqueue.app.event.CreatingPondEvent;
+import com.abdymalikmulky.settingqueue.app.job.CreatePondJob;
+import com.birbit.android.jobqueue.JobManager;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import timber.log.Timber;
+
+//lagi lagi dibutuhkannya dagger
 public class PondPresenter implements PondContract.Presenter {
 
     PondContract.View mPondView;
@@ -18,18 +28,36 @@ public class PondPresenter implements PondContract.Presenter {
     PondLocal pondLocal;
     PondRemote pondRemote;
 
-    public PondPresenter(PondContract.View pondView) {
+    JobManager jobManager;
+
+    public PondPresenter(PondContract.View pondView, JobManager jobManager) {
+        this.jobManager = jobManager;
+
         pondLocal = new PondLocal();
         pondRemote = new PondRemote();
         pondRepo = new PondRepo(pondRemote, pondLocal);
 
+
         mPondView = pondView;
         mPondView.setPresenter(this);
+
+
     }
 
     @Override
     public void start() {
         loadPonds();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void stop() {
+        try {
+            EventBus.getDefault().unregister(this);
+        } catch (Throwable t){
+            //this may crash if registration did not go through. just be safe
+        }
     }
 
     @Override
@@ -49,7 +77,8 @@ public class PondPresenter implements PondContract.Presenter {
 
     @Override
     public void savePond(Pond pond) {
-        pondRepo.save(pond, new PondDataSource.SavePondCallback() {
+        jobManager.addJobInBackground(new CreatePondJob(pond));
+        /*pondRepo.save(pond, new PondDataSource.SavePondCallback() {
             @Override
             public void onSaved(Pond pond) {
                 mPondView.showNewPondAdded(pond);
@@ -59,6 +88,12 @@ public class PondPresenter implements PondContract.Presenter {
             public void onFailed(String msg) {
                 mPondView.showNoPond();
             }
-        });
+        });*/
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CreatingPondEvent pondEvent) {
+        Timber.d("EventRun %s",pondEvent.getPond().toString());
+        loadPonds();
     }
 }

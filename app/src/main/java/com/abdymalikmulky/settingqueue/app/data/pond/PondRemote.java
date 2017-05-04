@@ -16,13 +16,14 @@ import timber.log.Timber;
 
 public class PondRemote implements PondDataSource {
 
+    PondApi api;
+
     public PondRemote() {
+        api = ApiHelper.client().create(PondApi.class);
     }
 
     @Override
     public void load(final LoadPondCallback callback) {
-
-        PondApi api = ApiHelper.client().create(PondApi.class);
         Call<PondResponse> call = api.getAll();
         call.enqueue(new Callback<PondResponse>() {
             @Override
@@ -43,7 +44,27 @@ public class PondRemote implements PondDataSource {
     }
 
     @Override
-    public void save(Pond pond, SavePondCallback callback) {
+    public void save(final Pond pond, final SavePondCallback callback) {
+        Call<PondNewResponse> call = api.create(pond.getName(), pond.getClientId(), pond.getUserId());
+        call.enqueue(new Callback<PondNewResponse>() {
+            @Override
+            public void onResponse(Call<PondNewResponse> call, Response<PondNewResponse> response) {
+                if(response.isSuccessful()){
+                    Timber.d("DataSuccess : %s", response.body().getPond().toString());
+                    Pond pond = response.body().getPond();
+                    callback.onSaved(pond);
+                }else{
+                    Timber.d("DataFail : %s", response.errorBody());
+                    callback.onFailed("Fail");
+                }
 
+            }
+
+            @Override
+            public void onFailure(Call<PondNewResponse> call, Throwable t) {
+                Timber.d("DataFail : %s", t.toString());
+                callback.onFailed("Fail");
+            }
+        });
     }
 }

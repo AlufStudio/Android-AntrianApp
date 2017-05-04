@@ -4,6 +4,8 @@ import com.abdymalikmulky.settingqueue.util.EndpointUtils;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Bismillahirrahmanirrahim
@@ -12,10 +14,11 @@ import retrofit2.http.GET;
 
 public interface PondApi {
 
-    public static final String URI_GET = EndpointUtils.ENDPOINT_LIST_POND;
-
-    @GET(URI_GET)
+    @GET(EndpointUtils.ENDPOINT_LIST_POND)
     public Call<PondResponse> getAll();
+
+    @POST(EndpointUtils.ENDPOINT_POST_POND)
+    public Call<PondNewResponse> create(@Query("name") String name, @Query("client_id") String clientId, @Query("user_id") long userId);
 
 
 }

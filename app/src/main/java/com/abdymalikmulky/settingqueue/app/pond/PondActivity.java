@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
-import com.abdymalikmulky.settingqueue.app.job.PostPondJob;
+import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
 
 
         initRv();
-        mPondPresenter = new PondPresenter(this);
+        mPondPresenter = new PondPresenter(this, jobManager);
         mPondPresenter.loadPonds();
     }
 
@@ -51,16 +51,14 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     }
 
     public void addPond(View view){
-//        Pond pond = new Pond();
-//        pond.setId(1);
-//        pond.setName("Pond New");
-//        pond.setClientId("lalala-yeyeye-lalalala-yeyeyeye");
-        jobManager.addJobInBackground(new PostPondJob("text"));
-
-
         int  idRand = new Random().nextInt(50) + 1;
         Pond pond = new Pond();
         pond.setName("Pond "+idRand);
+        pond.setUserId(1);
+        pond.setClientId(String.valueOf(System.currentTimeMillis()));
+        pond.setSyncState(AppUtils.STATE_NOT_SYNCED);
+
+
         mPondPresenter.savePond(pond);
     }
 
@@ -85,5 +83,17 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         pondAdapter.add(pond);
         Toast.makeText(this, "Added "+pond.getName(), Toast.LENGTH_SHORT).show();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPondPresenter.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPondPresenter.stop();
     }
 }

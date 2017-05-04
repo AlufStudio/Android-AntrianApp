@@ -9,11 +9,12 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.io.Serializable;
+
 @Table(database = DatabaseConfig.class)
-public class Pond extends BaseModel{
+public class Pond extends BaseModel implements Serializable{
 
     @Column
-    @PrimaryKey(autoincrement = true)
     @SerializedName("id")
     @Expose
     private int id;
@@ -29,6 +30,7 @@ public class Pond extends BaseModel{
     private int userId;
 
     @Column
+    @PrimaryKey(autoincrement = false)
     @SerializedName("client_id")
     @Expose
     private String clientId;
@@ -42,6 +44,9 @@ public class Pond extends BaseModel{
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+
+    @Column
+    private String syncState;
 
     public int getId() {
         return id;
@@ -91,6 +96,14 @@ public class Pond extends BaseModel{
         this.updatedAt = updatedAt;
     }
 
+    public String getSyncState() {
+        return syncState;
+    }
+
+    public void setSyncState(String syncState) {
+        this.syncState = syncState;
+    }
+
     @Override
     public String toString() {
         return "Pond{" +
@@ -100,6 +113,7 @@ public class Pond extends BaseModel{
                 ", clientId='" + clientId + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
+                ", syncState='" + syncState + '\'' +
                 '}';
     }
 }
