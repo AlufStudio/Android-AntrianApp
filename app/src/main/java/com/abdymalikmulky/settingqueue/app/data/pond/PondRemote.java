@@ -43,6 +43,7 @@ public class PondRemote {
     }
 
     public void save(final Pond pond, final PondDataSource.SaveRemotePondCallback callback) throws Throwable {
+        //TODO :: Pas on success mending langsung update local,
         Response<PondNewResponse> response = api.create(pond.getName(), pond.getClientId(), pond.getUserId()).execute();
         if(response.isSuccessful()){
             callback.onSaved(pond);

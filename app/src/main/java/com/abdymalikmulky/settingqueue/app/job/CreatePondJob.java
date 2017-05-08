@@ -44,6 +44,7 @@ public class CreatePondJob extends Job{
             }
             @Override
             public void onFailed(Throwable t) {
+                // TODO :: LOG yang enak kontekstual
                 Timber.d("Kegagalan | %s ", pond.toString());
             }
         });
@@ -66,9 +67,7 @@ public class CreatePondJob extends Job{
                         //throw error
                     }
                 });
-
             }
-
             @Override
             public void onFailed(Throwable t) throws Throwable {
                 throw t;
@@ -92,6 +91,8 @@ public class CreatePondJob extends Job{
         Timber.d("OnReRun Run Max Count %s", maxRunCount);
 
         if (shouldRetry(throwable)) {
+
+            //TODO :: waktu yang gradual
             RetryConstraint constraint = RetryConstraint
                     .createExponentialBackoff(runCount, 1000); //1 detik sajah
             constraint.setApplyNewDelayToGroup(true);
