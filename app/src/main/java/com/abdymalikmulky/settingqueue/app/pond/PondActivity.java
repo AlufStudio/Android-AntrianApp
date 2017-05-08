@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import timber.log.Timber;
+
 public class PondActivity extends AppCompatActivity implements PondContract.View{
 
     JobManager jobManager;
@@ -25,12 +27,15 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     PondAdapter pondAdapter;
     RecyclerView rvPond;
 
+
+    private ArrayList<Pond> pondList;
     private PondContract.Presenter mPondPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pondList = new ArrayList<>();
 
         jobManager = SettingQueueApplication.get().getJobManager();
 
@@ -45,7 +50,6 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         rvPond.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         rvPond.setLayoutManager(llm);
-        ArrayList<Pond> pondList = new ArrayList<>();
         pondAdapter = new PondAdapter(pondList);
         rvPond.setAdapter(pondAdapter);
     }
@@ -69,13 +73,19 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
 
     @Override
     public void showPonds(List<Pond> ponds) {
+        Timber.d("LISTPONDS %s", ponds.toString());
         pondAdapter.replace(ponds);
     }
 
     @Override
     public void showNoPond() {
         Toast.makeText(this, "NO POND", Toast.LENGTH_SHORT).show();
+        pondAdapter.replace(pondList);
+    }
 
+    @Override
+    public void showDeletedPond(Pond pond) {
+        Toast.makeText(this, "Sync Failure : Pond "+pond.getClientId()+"-"+pond.getName()+" Deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override

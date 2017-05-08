@@ -7,6 +7,7 @@ import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
 import com.abdymalikmulky.settingqueue.app.event.CreatingPondEvent;
+import com.abdymalikmulky.settingqueue.app.event.DeletedPondEvent;
 import com.abdymalikmulky.settingqueue.app.job.CreatePondJob;
 import com.birbit.android.jobqueue.JobManager;
 
@@ -46,8 +47,6 @@ public class PondPresenter implements PondContract.Presenter {
 
     @Override
     public void start() {
-        loadPonds();
-
         EventBus.getDefault().register(this);
     }
 
@@ -96,4 +95,10 @@ public class PondPresenter implements PondContract.Presenter {
         Timber.d("EventRun %s",pondEvent.getPond().toString());
         loadPonds();
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DeletedPondEvent pondEvent) {
+        mPondView.showDeletedPond(pondEvent.getPond());
+        loadPonds();
+    }
+
 }

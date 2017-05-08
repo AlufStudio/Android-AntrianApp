@@ -32,7 +32,6 @@ public class PondRepo implements PondDataSource {
         });
 
 /*
-
         pondRemote.load(new LoadPondCallback() {
             @Override
             public void onLoaded(List<Pond> ponds) {
@@ -57,24 +56,15 @@ public class PondRepo implements PondDataSource {
             }
 
             @Override
-            public void onFailed(String msg) {
-                callback.onFailed(msg);
+            public void onFailed(Throwable t) {
+                callback.onFailed(t);
             }
         });
     }
 
-    public void saveRemote(Pond pond, final SavePondCallback callback) {
-        pondRemote.save(pond, new SavePondCallback() {
-            @Override
-            public void onSaved(Pond pond) {
-                callback.onSaved(pond);
-            }
+    @Override
+    public void save(Pond pond, SaveRemotePondCallback callback) {
 
-            @Override
-            public void onFailed(String msg) {
-                callback.onFailed(msg);
-            }
-        });
     }
 
 }

@@ -15,6 +15,7 @@ import java.io.Serializable;
 public class Pond extends BaseModel implements Serializable{
 
     @Column
+    @PrimaryKey(autoincrement = true)
     @SerializedName("id")
     @Expose
     private int id;
@@ -30,7 +31,6 @@ public class Pond extends BaseModel implements Serializable{
     private int userId;
 
     @Column
-    @PrimaryKey(autoincrement = false)
     @SerializedName("client_id")
     @Expose
     private String clientId;

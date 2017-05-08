@@ -1,5 +1,6 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,12 +16,19 @@ public interface PondDataSource {
     }
     interface SavePondCallback {
         void onSaved(Pond pond);
-        void onFailed(String msg);
+        void onFailed(Throwable t);
+    }
+    interface SaveRemotePondCallback {
+        void onSaved(Pond pond);
+        void onFailed(Throwable t) throws Throwable;
     }
 
 
     void load(LoadPondCallback callback);
 
     void save(Pond pond, SavePondCallback callback);
+
+    void save(Pond pond, SaveRemotePondCallback callback) throws IOException, Throwable;
+
 
 }

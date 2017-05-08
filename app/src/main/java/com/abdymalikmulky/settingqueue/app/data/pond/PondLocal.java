@@ -28,22 +28,38 @@ public class PondLocal implements PondDataSource {
 
     @Override
     public void save(Pond newPond, SavePondCallback callback) {
+        long pondId = 0;
         Pond pond = new Pond();
         pond = newPond;
-        if(pond.save()){
+        pondId = pond.insert();
+
+        if(pondId > 0){
+            pond.setId((int) pondId);
             callback.onSaved(pond);
         }else{
-            callback.onFailed("Fail");
+            callback.onFailed(new Throwable());
         }
     }
 
+    @Override
+    public void save(Pond pond, SaveRemotePondCallback callback) {
+
+    }
+
+    public void delete(Pond pond){
+        SQLite.delete(Pond.class)
+                .where(Pond_Table.clientId.is(pond.getClientId()))
+                .async()
+                .execute();
+    }
+
     public void updateSyncState(Pond pondUpdate, SavePondCallback callback){
-        Pond pond = pondUpdate;
-        pond.setSyncState(AppUtils.STATE_SYNCED);
-        if(pond.save()){
-            callback.onSaved(pond);
-        }else{
-            callback.onFailed("Fail");
-        }
+        SQLite.update(Pond.class)
+                .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED))
+                .where(Pond_Table.clientId.is(pondUpdate.getClientId()))
+                .async()
+                .execute();
+
+        callback.onSaved(pondUpdate);
     }
 }
