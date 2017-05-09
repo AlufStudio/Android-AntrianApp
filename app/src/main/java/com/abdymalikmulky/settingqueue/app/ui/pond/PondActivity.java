@@ -1,5 +1,6 @@
 package com.abdymalikmulky.settingqueue.app.ui.pond;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondSp;
+import com.abdymalikmulky.settingqueue.app.ui.setting.SettingActivity;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
@@ -21,7 +23,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-public class PondActivity extends AppCompatActivity implements PondContract.View{
+public class PondActivity extends AppCompatActivity implements PondContract.View, PondItemClickListener{
 
     JobManager jobManager;
 
@@ -62,7 +64,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         rvPond.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         rvPond.setLayoutManager(llm);
-        pondAdapter = new PondAdapter(pondList);
+        pondAdapter = new PondAdapter(pondList, this);
         rvPond.setAdapter(pondAdapter);
     }
 
@@ -119,5 +121,13 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     protected void onStop() {
         super.onStop();
         mPondPresenter.stop();
+    }
+
+
+    @Override
+    public void onItemClick(Pond pond) {
+        Intent intent = new Intent(PondActivity.this, SettingActivity.class);
+        intent.putExtra("pond_id", pond.getClientId());
+        startActivity(intent);
     }
 }

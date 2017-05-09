@@ -1,5 +1,7 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import com.abdymalikmulky.settingqueue.app.data.pond.response.PondNewResponse;
+import com.abdymalikmulky.settingqueue.app.data.pond.response.PondResponse;
 import com.abdymalikmulky.settingqueue.util.EndpointUtils;
 
 import retrofit2.Call;

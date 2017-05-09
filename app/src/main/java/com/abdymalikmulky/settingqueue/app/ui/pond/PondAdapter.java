@@ -23,6 +23,55 @@ import timber.log.Timber;
 
 public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
     private List<Pond> ponds = new ArrayList<>();
+    PondItemClickListener listener;
+
+
+
+    public PondAdapter(ArrayList<Pond> ponds, PondItemClickListener listener) {
+        this.ponds = ponds;
+        this.listener = listener;
+    }
+
+    @Override
+    public PondAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_pond, parent, false);
+
+        final ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final Pond pond = ponds.get(position);
+
+        holder.tvPondName.setText(pond.getName());
+        holder.tvPondUser.setText(String.valueOf(pond.getClientId()));
+
+        if(pond.getSyncState().equals(AppUtils.STATE_SYNCED)){
+            holder.imgPond.setImageResource(R.mipmap.sync);
+
+        }else{
+            holder.imgPond.setImageResource(R.mipmap.notsync);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClick(pond);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return ponds.size();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgPond;
@@ -36,45 +85,7 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
             tvPondName = (TextView)v.findViewById(R.id.pond_name);
             tvPondUser = (TextView)v.findViewById(R.id.pond_user);
         }
-    }
 
-    public PondAdapter(ArrayList<Pond> ponds) {
-        this.ponds = ponds;
-    }
-
-    @Override
-    public PondAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_pond, parent, false);
-
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Pond pond = ponds.get(position);
-
-        holder.tvPondName.setText(pond.getName());
-        holder.tvPondUser.setText(String.valueOf(pond.getClientId()));
-
-        if(pond.getSyncState().equals(AppUtils.STATE_SYNCED)){
-            holder.imgPond.setImageResource(R.mipmap.sync);
-
-        }else{
-            holder.imgPond.setImageResource(R.mipmap.notsync);
-
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return ponds.size();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
     }
 
     public void replace(List<Pond> ponds){

@@ -1,5 +1,7 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import com.abdymalikmulky.settingqueue.app.data.pond.response.PondNewResponse;
+import com.abdymalikmulky.settingqueue.app.data.pond.response.PondResponse;
 import com.abdymalikmulky.settingqueue.app.job.NetworkException;
 import com.abdymalikmulky.settingqueue.helper.ApiHelper;
 

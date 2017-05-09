@@ -1,6 +1,7 @@
 
-package com.abdymalikmulky.settingqueue.app.data.pond;
+package com.abdymalikmulky.settingqueue.app.data.pond.response;
 
+import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 import com.abdymalikmulky.settingqueue.app.data.user.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
