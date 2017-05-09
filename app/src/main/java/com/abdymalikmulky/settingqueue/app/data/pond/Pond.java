@@ -15,10 +15,10 @@ import java.io.Serializable;
 public class Pond extends BaseModel implements Serializable{
 
     @Column
-    @PrimaryKey(autoincrement = true)
+    @PrimaryKey(autoincrement = false)
     @SerializedName("id")
     @Expose
-    private int id;
+    private long id;
 
     @Column
     @SerializedName("name")
@@ -48,11 +48,11 @@ public class Pond extends BaseModel implements Serializable{
     @Column
     private String syncState;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

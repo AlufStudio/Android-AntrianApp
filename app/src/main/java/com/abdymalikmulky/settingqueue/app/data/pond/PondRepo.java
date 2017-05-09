@@ -30,21 +30,6 @@ public class PondRepo implements PondDataSource {
                 callback.onNoData(msg);
             }
         });
-
-/*
-        pondRemote.load(new LoadPondCallback() {
-            @Override
-            public void onLoaded(List<Pond> ponds) {
-                callback.onLoaded(ponds);
-            }
-
-            @Override
-            public void onNoData(String msg) {
-                callback.onNoData(msg);
-            }
-        });
-*/
-
     }
 
     @Override

@@ -46,7 +46,8 @@ public class PondRemote {
         //TODO :: Pas on success mending langsung update local,
         Response<PondNewResponse> response = api.create(pond.getName(), pond.getClientId(), pond.getUserId()).execute();
         if(response.isSuccessful()){
-            callback.onSaved(pond);
+            Pond newPondSynced = response.body().getPond();
+            callback.onSaved(newPondSynced);
         }else{
             callback.onFailed(new NetworkException(response.code()));
         }

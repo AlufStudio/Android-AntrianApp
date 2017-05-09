@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.pond;
+package com.abdymalikmulky.settingqueue.app.ui.pond;
 
 
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;

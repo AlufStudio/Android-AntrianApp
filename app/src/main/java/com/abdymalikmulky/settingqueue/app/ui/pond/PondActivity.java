@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.pond;
+package com.abdymalikmulky.settingqueue.app.ui.pond;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,18 +10,22 @@ import android.widget.Toast;
 import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
+import com.abdymalikmulky.settingqueue.app.data.pond.PondSp;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import timber.log.Timber;
 
 public class PondActivity extends AppCompatActivity implements PondContract.View{
 
     JobManager jobManager;
+
+    PondSp pondSp;
 
 
     PondAdapter pondAdapter;
@@ -35,14 +39,22 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         pondList = new ArrayList<>();
+
+        initRv();
+
+
 
         jobManager = SettingQueueApplication.get().getJobManager();
 
+        pondSp = new PondSp(getApplicationContext());
 
-        initRv();
         mPondPresenter = new PondPresenter(this, jobManager);
+
         mPondPresenter.loadPonds();
+
+
     }
 
     private void initRv(){
@@ -57,9 +69,10 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     public void addPond(View view){
         int  idRand = new Random().nextInt(50) + 1;
         Pond pond = new Pond();
-        pond.setName("Pond "+idRand);
+        pond.setId(pondSp.getLastPondId());
+        pond.setName("Pond "+AppUtils.getSaltString());
         pond.setUserId(1);
-        pond.setClientId(String.valueOf(System.currentTimeMillis()));
+        pond.setClientId(UUID.randomUUID().toString());
         pond.setSyncState(AppUtils.STATE_NOT_SYNCED);
 
 
@@ -74,6 +87,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     @Override
     public void showPonds(List<Pond> ponds) {
         Timber.d("LISTPONDS %s", ponds.toString());
+
         pondAdapter.replace(ponds);
     }
 

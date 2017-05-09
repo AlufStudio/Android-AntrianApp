@@ -56,7 +56,7 @@ public class CreatePondJob extends Job{
             @Override
             public void onSaved(Pond pond) {
                 Timber.d("OnRunRemote | %s ", pond.toString());
-                new PondLocal().updateSyncState(pond, new PondDataSource.SavePondCallback() {
+                new PondLocal().update(pond, new PondDataSource.SavePondCallback() {
                     @Override
                     public void onSaved(Pond pond) {
                         Timber.d("OnRunRemoteUpdate | %s ", pond.toString());
@@ -64,7 +64,7 @@ public class CreatePondJob extends Job{
                     }
                     @Override
                     public void onFailed(Throwable t) {
-                        //throw error
+                        Timber.d("OnRunFail | %s ", t.toString());
                     }
                 });
             }

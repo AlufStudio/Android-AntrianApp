@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.pond;
+package com.abdymalikmulky.settingqueue.app.ui.pond;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -56,7 +56,7 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
         Pond pond = ponds.get(position);
 
         holder.tvPondName.setText(pond.getName());
-        holder.tvPondUser.setText(String.valueOf(pond.getId()));
+        holder.tvPondUser.setText(String.valueOf(pond.getClientId()));
 
         if(pond.getSyncState().equals(AppUtils.STATE_SYNCED)){
             holder.imgPond.setImageResource(R.mipmap.sync);

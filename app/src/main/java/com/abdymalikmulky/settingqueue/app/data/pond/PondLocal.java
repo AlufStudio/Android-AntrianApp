@@ -55,13 +55,17 @@ public class PondLocal implements PondDataSource {
                 .execute();
     }
 
-    public void updateSyncState(Pond pondUpdate, SavePondCallback callback){
+    public void update(Pond pondUpdate, SavePondCallback callback){
         SQLite.update(Pond.class)
-                .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED))
+                .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED),
+                        Pond_Table.id.eq(pondUpdate.getId()),
+                        Pond_Table.createdAt.eq(pondUpdate.getCreatedAt()),
+                        Pond_Table.updatedAt.eq(pondUpdate.getUpdatedAt()))
                 .where(Pond_Table.clientId.is(pondUpdate.getClientId()))
                 .async()
                 .execute();
-
         callback.onSaved(pondUpdate);
     }
+
+
 }
