@@ -2,20 +2,22 @@ package com.abdymalikmulky.settingqueue.app.ui.setting;
 
 import com.abdymalikmulky.settingqueue.app.BasePresenter;
 import com.abdymalikmulky.settingqueue.app.BaseView;
-import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
+import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
+
+import java.util.List;
 
 public interface SettingContract {
 
     interface View extends BaseView<Presenter> {
-        void showSetting(long pondId);
+        void showSetting(List<Setting> settings);
 
-        void showNoSetting();
+        void showNoSetting(String msg);
 
-        void showNewSetting();
+        void showNewSetting(Setting setting);
     }
     interface Presenter extends BasePresenter {
-        void loadSetting();
+        void loadSetting(long pondId);
 
-        void saveSetting(Pond pond);
+        void saveSetting(long pondId, Setting setting) throws Throwable;
     }
 }

@@ -1,6 +1,7 @@
 package com.abdymalikmulky.settingqueue.app.data.setting.response;
 
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
+import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.user.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -20,19 +21,31 @@ public class SettingNewResponse {
 
     @SerializedName("setting")
     @Expose
-    private User setting = null;
+    private Setting setting = null;
 
 
     public User getUser() {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Pond getPond() {
         return pond;
     }
 
-    public User getSetting() {
+    public void setPond(Pond pond) {
+        this.pond = pond;
+    }
+
+    public Setting getSetting() {
         return setting;
+    }
+
+    public void setSetting(Setting setting) {
+        this.setting = setting;
     }
 
     @Override

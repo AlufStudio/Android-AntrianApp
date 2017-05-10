@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class Setting extends BaseModel implements Serializable {
 
     @Column
-    @PrimaryKey(autoincrement = false)
+    @PrimaryKey(autoincrement = true)
     @SerializedName("id")
     @Expose
     private long id;
@@ -41,13 +41,20 @@ public class Setting extends BaseModel implements Serializable {
     @Column
     @SerializedName("pond_id")
     @Expose
-    int pondId;
+    long pondId;
 
     @Column
     @SerializedName("created_at")
     @Expose
-    long createdAt;
+    String createdAt;
 
+    @Column
+    @SerializedName("client_id")
+    @Expose
+    String clientId;
+
+    @Column
+    private String syncState;
 
     public Setting() {
     }
@@ -83,15 +90,49 @@ public class Setting extends BaseModel implements Serializable {
         this.freq = freq;
     }
 
-    public int getPondId() {
+    public long getPondId() {
         return pondId;
     }
 
-    public void setPondId(int pondId) {
+    public void setPondId(long pondId) {
         this.pondId = pondId;
     }
 
-    public void setCreatedAt(long createdAt) {
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getSyncState() {
+        return syncState;
+    }
+
+    public void setSyncState(String syncState) {
+        this.syncState = syncState;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Override
+    public String toString() {
+        return "Setting{" +
+                "id=" + id +
+                ", feedWeight=" + feedWeight +
+                ", fishWeight=" + fishWeight +
+                ", freq=" + freq +
+                ", pondId=" + pondId +
+                ", createdAt='" + createdAt + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", syncState='" + syncState + '\'' +
+                '}';
     }
 }

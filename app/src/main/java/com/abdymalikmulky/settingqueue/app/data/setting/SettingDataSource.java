@@ -14,15 +14,15 @@ public interface SettingDataSource {
     }
     interface SaveSettingCallback {
         void onSaved(Setting setting);
-        void onFailed(Throwable t) throws Throwable;
+        void onFailed(Throwable t);
     }
     interface SaveRemoteSettingCallback {
-        void onSaved(Setting pond);
+        void onSaved(Setting SETTING);
         void onFailed(Throwable t) throws Throwable;
     }
 
 
-    void load(int pondId, LoadSettingCallback callback);
+    void load(long pondId, LoadSettingCallback callback);
 
     void save(Setting setting, SaveSettingCallback callback) throws Throwable;
 

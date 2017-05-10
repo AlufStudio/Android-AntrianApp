@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.event;
+package com.abdymalikmulky.settingqueue.app.event.pond;
 
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 

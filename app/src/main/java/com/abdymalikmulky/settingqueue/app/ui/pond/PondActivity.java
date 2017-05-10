@@ -18,7 +18,6 @@ import com.birbit.android.jobqueue.JobManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -53,10 +52,6 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         pondSp = new PondSp(getApplicationContext());
 
         mPondPresenter = new PondPresenter(this, jobManager);
-
-        mPondPresenter.loadPonds();
-
-
     }
 
     private void initRv(){
@@ -69,7 +64,6 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     }
 
     public void addPond(View view){
-        int  idRand = new Random().nextInt(50) + 1;
         Pond pond = new Pond();
         pond.setId(pondSp.getLastPondId());
         pond.setName("Pond "+AppUtils.getSaltString());
@@ -88,8 +82,6 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
 
     @Override
     public void showPonds(List<Pond> ponds) {
-        Timber.d("LISTPONDS %s", ponds.toString());
-
         pondAdapter.replace(ponds);
     }
 
@@ -114,7 +106,10 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     @Override
     protected void onStart() {
         super.onStart();
+        Timber.d("AKUSTART");
         mPondPresenter.start();
+
+        mPondPresenter.loadPonds();
     }
 
     @Override
@@ -127,7 +122,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
     @Override
     public void onItemClick(Pond pond) {
         Intent intent = new Intent(PondActivity.this, SettingActivity.class);
-        intent.putExtra("pond_id", pond.getClientId());
+        intent.putExtra("pond_id", pond.getId());
         startActivity(intent);
     }
 }
