@@ -14,7 +14,7 @@ public interface SettingContract {
         void showNewSetting();
     }
     interface Presenter extends BasePresenter {
-        void loadPonds();
+        void loadSetting();
 
         void saveSetting(Pond pond);
     }

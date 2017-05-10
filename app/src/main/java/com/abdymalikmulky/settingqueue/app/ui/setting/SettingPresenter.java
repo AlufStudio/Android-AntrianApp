@@ -2,9 +2,6 @@ package com.abdymalikmulky.settingqueue.app.ui.setting;
 
 
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
-import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
-import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
-import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
 import com.birbit.android.jobqueue.JobManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -12,27 +9,15 @@ import org.greenrobot.eventbus.EventBus;
 //lagi lagi dibutuhkannya dagger
 public class SettingPresenter implements SettingContract.Presenter {
 
-    SettingContract.View mPondView;
-
-    //REPO
-    PondRepo pondRepo;
-    PondLocal pondLocal;
-    PondRemote pondRemote;
+    SettingContract.View mSettingView;
 
     JobManager jobManager;
 
-    public SettingPresenter(SettingContract.View pondView, JobManager jobManager) {
+    public SettingPresenter(SettingContract.View settingView, JobManager jobManager) {
         this.jobManager = jobManager;
 
-        pondLocal = new PondLocal();
-        pondRemote = new PondRemote();
-        pondRepo = new PondRepo(pondRemote, pondLocal);
-
-
-        mPondView = pondView;
-        mPondView.setPresenter(this);
-
-
+        mSettingView = settingView;
+        mSettingView.setPresenter(this);
     }
 
     @Override
@@ -49,9 +34,8 @@ public class SettingPresenter implements SettingContract.Presenter {
         }
     }
 
-
     @Override
-    public void loadPonds() {
+    public void loadSetting() {
 
     }
 
