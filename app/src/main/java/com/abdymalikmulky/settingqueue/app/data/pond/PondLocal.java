@@ -8,6 +8,8 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Bismillahirrahmanirrahim
  * Created by abdymalikmulky on 5/2/17.
@@ -58,6 +60,8 @@ public class PondLocal implements PondDataSource {
     }
 
     public void update(Pond pondUpdate, SavePondCallback callback){
+        pondUpdate.setSyncState(AppUtils.STATE_SYNCED);
+
         SQLite.update(Setting.class)
                 .set(Setting_Table.pondId.eq(pondUpdate.getId()))
                 .where(Setting_Table.pondClientId.is(pondUpdate.getClientId()))
@@ -65,7 +69,7 @@ public class PondLocal implements PondDataSource {
                 .execute();
 
         SQLite.update(Pond.class)
-                .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED),
+                .set(Pond_Table.syncState.eq(pondUpdate.getSyncState()),
                         Pond_Table.id.eq(pondUpdate.getId()),
                         Pond_Table.createdAt.eq(pondUpdate.getCreatedAt()),
                         Pond_Table.updatedAt.eq(pondUpdate.getUpdatedAt()))
@@ -74,7 +78,7 @@ public class PondLocal implements PondDataSource {
                 .execute();
 
 
-
+        Timber.d(pondUpdate.toString());
         callback.onSaved(pondUpdate);
 
     }

@@ -1,5 +1,7 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import com.abdymalikmulky.settingqueue.util.AppUtils;
+
 import java.util.List;
 
 /**
@@ -19,6 +21,31 @@ public class PondRepo implements PondDataSource {
 
     @Override
     public void load(final LoadPondCallback callback) {
+        pondRemote.load(new LoadPondCallback() {
+            @Override
+            public void onLoaded(List<Pond> ponds) {
+                for (Pond pond :ponds) {
+                    pond.setSyncState(AppUtils.STATE_SYNCED);
+                    pondLocal.save(pond, new SaveRemotePondCallback() {
+                        @Override
+                        public void onSaved(Pond pond) {
+                        }
+                        @Override
+                        public void onFailed(Throwable t) throws Throwable {
+                        }
+                    });
+                }
+                callback.onLoaded(ponds);
+            }
+
+            @Override
+            public void onNoData(String msg) {
+                callback.onNoData(msg);
+            }
+        });
+    }
+
+    public void loadLocal(final LoadPondCallback callback) {
         pondLocal.load(new LoadPondCallback() {
             @Override
             public void onLoaded(List<Pond> ponds) {

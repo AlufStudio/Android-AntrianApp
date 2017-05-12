@@ -102,8 +102,19 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
 
     @Override
     public void showSetting(List<Setting> settings) {
-        tvSettingResult.setText(settings.get(0).toString());
+        String readablePlainText = makeSettingStringReadble(settings.get(0));
+        tvSettingResult.setText(readablePlainText);
         btnSetting.setText(getString(R.string.btn_edit_setting));
+    }
+
+    //Hanya kepentingan biew
+    private String makeSettingStringReadble(Setting setting){
+        String plain = "SETTING";
+        plain += "\nBerat Pakan : "+setting.getFeedWeight();
+        plain += "\nBerat Ikan : "+setting.getFishWeight();
+        plain += "\nFrekuensi : "+setting.getFreq();
+        plain += "\nSTATE : "+setting.getSyncState();
+        return plain;
     }
 
     @Override

@@ -31,9 +31,12 @@ public class PondRemote {
             @Override
             public void onResponse(Call<PondResponse> call, Response<PondResponse> response) {
                 List<Pond> ponds = response.body().getPonds();
-                callback.onLoaded(ponds);
+                if(ponds.size() == 0){
+                    callback.onNoData("NO Data");
+                }else{
+                    callback.onLoaded(ponds);
+                }
 
-                Timber.d("DataSuccess : %s", response.body().getPonds().toString());
             }
             @Override
             public void onFailure(Call<PondResponse> call, Throwable t) {

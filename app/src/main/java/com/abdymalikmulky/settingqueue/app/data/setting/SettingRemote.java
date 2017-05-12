@@ -35,7 +35,6 @@ public class SettingRemote implements SettingDataSource {
                 }else{
                     callback.onNoData("No Data");
                 }
-                Timber.d("DataSuccess-Setting : %s", response.body().getSettings().toString());
             }
             @Override
             public void onFailure(Call<SettingResponse> call, Throwable t) {

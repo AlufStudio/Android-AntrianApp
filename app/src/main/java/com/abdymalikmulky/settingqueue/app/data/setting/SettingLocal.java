@@ -113,7 +113,8 @@ public class SettingLocal implements SettingDataSource {
 
     public void updateSync(Setting settingUpdate, SaveSettingCallback callback){
         SQLite.update(Setting.class)
-                .set(Setting_Table.syncState.eq(AppUtils.STATE_SYNCED),
+                .set(Setting_Table.id.eq(settingUpdate.getId()),
+                        Setting_Table.syncState.eq(AppUtils.STATE_SYNCED),
                         Setting_Table.createdAt.eq(settingUpdate.getCreatedAt()))
                 .where(Setting_Table.clientId.is(settingUpdate.getClientId()))
                 .async()

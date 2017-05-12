@@ -109,7 +109,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         Timber.d("AKUSTART");
         mPondPresenter.start();
 
-        mPondPresenter.loadPonds();
+        mPondPresenter.syncPonds();
     }
 
     @Override

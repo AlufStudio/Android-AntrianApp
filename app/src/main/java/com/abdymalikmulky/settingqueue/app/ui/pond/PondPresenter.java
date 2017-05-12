@@ -9,6 +9,7 @@ import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
 import com.abdymalikmulky.settingqueue.app.events.pond.CreatingPondEvent;
 import com.abdymalikmulky.settingqueue.app.events.pond.DeletedPondEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.CreatePondJob;
+import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,9 +62,27 @@ public class PondPresenter implements PondContract.Presenter {
 
     @Override
     public void loadPonds() {
+        pondRepo.loadLocal(new PondDataSource.LoadPondCallback() {
+            @Override
+            public void onLoaded(List<Pond> ponds) {
+                mPondView.showPonds(ponds);
+            }
+
+            @Override
+            public void onNoData(String msg) {
+                mPondView.showNoPond();
+            }
+        });
+    }
+
+    @Override
+    public void syncPonds(){
         pondRepo.load(new PondDataSource.LoadPondCallback() {
             @Override
             public void onLoaded(List<Pond> ponds) {
+                for (Pond pond : ponds) {
+                    pond.setSyncState(AppUtils.STATE_SYNCED);
+                }
                 mPondView.showPonds(ponds);
             }
 

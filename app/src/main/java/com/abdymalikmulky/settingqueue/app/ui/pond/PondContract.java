@@ -21,6 +21,8 @@ public interface PondContract {
     interface Presenter extends BasePresenter {
         void loadPonds();
 
+        void syncPonds();
+
         void savePond(Pond pond);
     }
 }
