@@ -11,6 +11,7 @@ public interface SettingDataSource {
     interface LoadSettingCallback {
         void onLoaded(List<Setting> settings);
         void onNoData(String msg);
+        void onFailed(Throwable t) throws Throwable;
     }
     interface SaveSettingCallback {
         void onSaved(Setting setting);

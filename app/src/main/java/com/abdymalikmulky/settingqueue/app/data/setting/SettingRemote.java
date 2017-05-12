@@ -2,10 +2,10 @@ package com.abdymalikmulky.settingqueue.app.data.setting;
 
 import com.abdymalikmulky.settingqueue.app.data.setting.response.SettingNewResponse;
 import com.abdymalikmulky.settingqueue.app.data.setting.response.SettingResponse;
+import com.abdymalikmulky.settingqueue.app.jobs.NetworkException;
 import com.abdymalikmulky.settingqueue.helper.ApiHelper;
 
 import java.util.List;
-import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,16 +52,16 @@ public class SettingRemote implements SettingDataSource {
 
     @Override
     public void save(Setting setting, final SaveRemoteSettingCallback callback) throws Throwable {
-        /*Response<SettingNewResponse> response = api.create(setting.getPondId(), setting.getFeedWeight(),
-                setting.getFishWeight(), setting.getFreq(), UUID.randomUUID().toString()).execute();
+        Response<SettingNewResponse> response = api.create(setting.getPondId(), setting.getFeedWeight(),
+                setting.getFishWeight(), setting.getFreq(), setting.getClientId()).execute();
 
         if(response.isSuccessful()){
             Setting newSetting = response.body().getSetting();
             callback.onSaved(newSetting);
         }else{
             callback.onFailed(new NetworkException(response.code()));
-        }*/
-        Call<SettingNewResponse> call = api.create(setting.getPondId(), setting.getFeedWeight(),
+        }
+        /*Call<SettingNewResponse> call = api.create(setting.getPondId(), setting.getFeedWeight(),
                 setting.getFishWeight(), setting.getFreq(), UUID.randomUUID().toString());
         call.enqueue(new Callback<SettingNewResponse>() {
             @Override
@@ -78,6 +78,6 @@ public class SettingRemote implements SettingDataSource {
                 }
                 Timber.d("DataFail-Setting : %s", t.toString());
             }
-        });
+        });*/
     }
 }

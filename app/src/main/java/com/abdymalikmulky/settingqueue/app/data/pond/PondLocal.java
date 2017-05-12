@@ -1,5 +1,7 @@
 package com.abdymalikmulky.settingqueue.app.data.pond;
 
+import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
+import com.abdymalikmulky.settingqueue.app.data.setting.Setting_Table;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
@@ -56,6 +58,12 @@ public class PondLocal implements PondDataSource {
     }
 
     public void update(Pond pondUpdate, SavePondCallback callback){
+        SQLite.update(Setting.class)
+                .set(Setting_Table.pondId.eq(pondUpdate.getId()))
+                .where(Setting_Table.pondClientId.is(pondUpdate.getClientId()))
+                .async()
+                .execute();
+
         SQLite.update(Pond.class)
                 .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED),
                         Pond_Table.id.eq(pondUpdate.getId()),
@@ -64,7 +72,11 @@ public class PondLocal implements PondDataSource {
                 .where(Pond_Table.clientId.is(pondUpdate.getClientId()))
                 .async()
                 .execute();
+
+
+
         callback.onSaved(pondUpdate);
+
     }
 
 

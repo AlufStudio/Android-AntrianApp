@@ -5,9 +5,11 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
-import com.abdymalikmulky.settingqueue.app.event.pond.DeletedPondEvent;
-import com.abdymalikmulky.settingqueue.app.event.setting.CreatingSettingEvent;
-import com.abdymalikmulky.settingqueue.app.job.CreateSettingJob;
+import com.abdymalikmulky.settingqueue.app.events.setting.CreatingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.DeletedSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.FetchingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.jobs.CreateSettingJob;
+import com.abdymalikmulky.settingqueue.app.jobs.FetchSettingByPondJob;
 import com.birbit.android.jobqueue.JobManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +57,7 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     @Override
     public void loadSetting(long pondId) {
-        settingRemote.load(pondId, new SettingDataSource.LoadSettingCallback() {
+        settingLocal.load(pondId, new SettingDataSource.LoadSettingCallback() {
             @Override
             public void onLoaded(List<Setting> settings) {
                 mSettingView.showSetting(settings);
@@ -65,37 +67,36 @@ public class SettingPresenter implements SettingContract.Presenter {
             public void onNoData(String msg) {
                 mSettingView.showNoSetting(msg);
             }
+
+            @Override
+            public void onFailed(Throwable t) throws Throwable {
+            }
         });
+    }
+
+    @Override
+    public void syncSetting(long pondId) {
+        jobManager.addJobInBackground(new FetchSettingByPondJob(pondId));
     }
 
     @Override
     public void saveSetting(long pondId, Setting setting) {
         setting.setPondId(pondId);
         jobManager.addJobInBackground(new CreateSettingJob(setting));
-
-        /*setting.setPondId(pondId);
-        settingRemote.save(setting, new SettingDataSource.SaveRemoteSettingCallback() {
-            @Override
-            public void onSaved(Setting setting) {
-                mSettingView.showNewSetting(setting);
-            }
-
-            @Override
-            public void onFailed(Throwable t) throws Throwable {
-                mSettingView.showNoSetting(t.toString());
-            }
-        });*/
     }
-
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(CreatingSettingEvent settingEvent) {
         Timber.d("EventRun %s",settingEvent.getSetting().toString());
+        loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(DeletedPondEvent pondEvent) {
-
+    public void onMessageEvent(DeletedSettingEvent settingEvent) {
+        loadSetting(settingEvent.getSetting().getPondId());
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(FetchingSettingEvent settingEvent) {
+        loadSetting(settingEvent.getPondId());
     }
 
 }

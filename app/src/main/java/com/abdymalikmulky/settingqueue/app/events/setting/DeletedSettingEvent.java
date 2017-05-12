@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.event.setting;
+package com.abdymalikmulky.settingqueue.app.events.setting;
 
 import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 
@@ -6,10 +6,10 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
  * Created by efishery on 04/05/17.
  */
 
-public class CreatingSettingEvent {
+public class DeletedSettingEvent {
     private Setting setting;
 
-    public CreatingSettingEvent(Setting setting) {
+    public DeletedSettingEvent(Setting setting) {
         this.setting = setting;
     }
 

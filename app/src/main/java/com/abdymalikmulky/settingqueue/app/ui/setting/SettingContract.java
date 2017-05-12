@@ -18,6 +18,8 @@ public interface SettingContract {
     interface Presenter extends BasePresenter {
         void loadSetting(long pondId);
 
+        void syncSetting(long pondId);
+
         void saveSetting(long pondId, Setting setting) throws Throwable;
     }
 }

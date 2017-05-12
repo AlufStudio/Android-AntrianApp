@@ -2,7 +2,7 @@ package com.abdymalikmulky.settingqueue.app.data.pond;
 
 import com.abdymalikmulky.settingqueue.app.data.pond.response.PondNewResponse;
 import com.abdymalikmulky.settingqueue.app.data.pond.response.PondResponse;
-import com.abdymalikmulky.settingqueue.app.job.NetworkException;
+import com.abdymalikmulky.settingqueue.app.jobs.NetworkException;
 import com.abdymalikmulky.settingqueue.helper.ApiHelper;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class PondRemote {
     }
 
     public void save(final Pond pond, final PondDataSource.SaveRemotePondCallback callback) throws Throwable {
-        //TODO :: Pas on success mending langsung update local,
+        //TODO :: Pas on success mending langsung updateSync local,
         Response<PondNewResponse> response = api.create(pond.getName(), pond.getClientId(), pond.getUserId()).execute();
 
         if(response.isSuccessful()){

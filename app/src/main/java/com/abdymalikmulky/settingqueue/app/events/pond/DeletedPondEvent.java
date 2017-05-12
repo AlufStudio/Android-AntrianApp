@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.event.pond;
+package com.abdymalikmulky.settingqueue.app.events.pond;
 
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 
@@ -6,10 +6,10 @@ import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
  * Created by efishery on 04/05/17.
  */
 
-public class CreatingPondEvent {
+public class DeletedPondEvent {
     private Pond pond;
 
-    public CreatingPondEvent(Pond pond) {
+    public DeletedPondEvent(Pond pond) {
         this.pond = pond;
     }
 

@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class Setting extends BaseModel implements Serializable {
 
     @Column
-    @PrimaryKey(autoincrement = true)
+    @PrimaryKey(autoincrement = false)
     @SerializedName("id")
     @Expose
     private long id;
@@ -52,6 +52,9 @@ public class Setting extends BaseModel implements Serializable {
     @SerializedName("client_id")
     @Expose
     String clientId;
+
+    @Column
+    String pondClientId;
 
     @Column
     private String syncState;
@@ -122,6 +125,14 @@ public class Setting extends BaseModel implements Serializable {
         this.clientId = clientId;
     }
 
+    public String getPondClientId() {
+        return pondClientId;
+    }
+
+    public void setPondClientId(String pondClientId) {
+        this.pondClientId = pondClientId;
+    }
+
     @Override
     public String toString() {
         return "Setting{" +
@@ -132,6 +143,7 @@ public class Setting extends BaseModel implements Serializable {
                 ", pondId=" + pondId +
                 ", createdAt='" + createdAt + '\'' +
                 ", clientId='" + clientId + '\'' +
+                ", pondClientId='" + pondClientId + '\'' +
                 ", syncState='" + syncState + '\'' +
                 '}';
     }

@@ -6,9 +6,9 @@ import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
-import com.abdymalikmulky.settingqueue.app.event.pond.CreatingPondEvent;
-import com.abdymalikmulky.settingqueue.app.event.pond.DeletedPondEvent;
-import com.abdymalikmulky.settingqueue.app.job.CreatePondJob;
+import com.abdymalikmulky.settingqueue.app.events.pond.CreatingPondEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.DeletedPondEvent;
+import com.abdymalikmulky.settingqueue.app.jobs.CreatePondJob;
 import com.birbit.android.jobqueue.JobManager;
 
 import org.greenrobot.eventbus.EventBus;

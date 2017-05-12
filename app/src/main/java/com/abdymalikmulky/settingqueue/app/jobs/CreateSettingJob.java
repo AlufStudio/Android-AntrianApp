@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.job;
+package com.abdymalikmulky.settingqueue.app.jobs;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,7 +7,8 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
-import com.abdymalikmulky.settingqueue.app.event.setting.CreatingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.CreatingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.DeletedSettingEvent;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -38,10 +39,9 @@ public class CreateSettingJob extends Job{
             new SettingLocal().save(setting, new SettingDataSource.SaveSettingCallback() {
                 @Override
                 public void onSaved(Setting setting) {
-                    Timber.d("onAdded | %s ", setting.toString());
+                    Timber.d("onAdded-Setting | %s ", setting.toString());
                     EventBus.getDefault().post(new CreatingSettingEvent(setting));
                 }
-
                 @Override
                 public void onFailed(Throwable t) {
                     Timber.e("Fail-Local %s", t.toString());
@@ -50,12 +50,27 @@ public class CreateSettingJob extends Job{
     }
     @Override
     public void onRun() throws Throwable {
-        Timber.d("onRun | %s", setting.toString());
-        new SettingRemote().save(setting, new SettingDataSource.SaveRemoteSettingCallback() {
+        Timber.d("OnRun-Setting | %s", setting.toString());
+        //updated pondId LOGS
+        Setting newSetting = new SettingLocal().get(setting.getId());
+        Timber.d("Data-Setting %s",setting.toString());
+        Timber.d("Data-NewSetting %s",newSetting.toString());
+        new SettingRemote().save(newSetting, new SettingDataSource.SaveRemoteSettingCallback() {
             @Override
             public void onSaved(Setting setting) {
-                Timber.d("OnRunRemote | %s ", setting.toString());
+                Timber.d("OnRunRemote-Setting | %s ", setting.toString());
+                new SettingLocal().updateSync(setting, new SettingDataSource.SaveSettingCallback() {
+                    @Override
+                    public void onSaved(Setting setting) {
+                        Timber.d("OnRunRemoteUpdate-Setting | %s ", setting.toString());
+                        EventBus.getDefault().post(new CreatingSettingEvent(setting));
+                    }
 
+                    @Override
+                    public void onFailed(Throwable t) {
+                        Timber.d("OnRunFail-Setting | %s ", t.toString());
+                    }
+                });
             }
 
             @Override
@@ -67,22 +82,26 @@ public class CreateSettingJob extends Job{
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
+        new SettingLocal().delete(setting);
+        EventBus.getDefault().post(new DeletedSettingEvent(setting));
+        Timber.d("onCancel-Setting %s", throwable.toString());
 
-        Timber.d("onCancel | JobJob %s", throwable.toString());
     }
 
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
-        //retry methodnya ini
-        Timber.d("OnReRun %s", setting.toString());
-        Timber.d("OnReRun Run Count %s", runCount);
-        Timber.d("OnReRun Run Max Count %s", maxRunCount);
+        long initialBackOff = 0;
+
+        Timber.d("OnReRun-Setting %s", setting.toString());
+        Timber.d("OnReRun-Setting Run Count %s", runCount);
+        Timber.d("OnReRun-Setting Run Max Count %s", maxRunCount);
 
         if (shouldRetry(throwable)) {
             //TODO :: waktu yang gradual
+            initialBackOff = runCount * 1000;
             RetryConstraint constraint = RetryConstraint
-                    .createExponentialBackoff(runCount, 1000); //1 detik sajah
+                    .createExponentialBackoff(runCount, initialBackOff); //1 detik sajah
             constraint.setApplyNewDelayToGroup(true);
 
             return constraint;

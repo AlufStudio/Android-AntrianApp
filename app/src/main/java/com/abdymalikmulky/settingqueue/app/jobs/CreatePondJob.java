@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.job;
+package com.abdymalikmulky.settingqueue.app.jobs;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,8 +7,8 @@ import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
-import com.abdymalikmulky.settingqueue.app.event.pond.CreatingPondEvent;
-import com.abdymalikmulky.settingqueue.app.event.pond.DeletedPondEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.CreatingPondEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.DeletedPondEvent;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;

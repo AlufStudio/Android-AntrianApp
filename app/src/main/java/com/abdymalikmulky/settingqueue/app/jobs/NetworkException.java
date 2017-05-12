@@ -15,7 +15,7 @@
  *
  */
 
-package com.abdymalikmulky.settingqueue.app.job;
+package com.abdymalikmulky.settingqueue.app.jobs;
 
 public class NetworkException extends RuntimeException {
 

@@ -3,4 +3,5 @@
     <string name="btn_new_setting">Buat Setting</string>
     <string name="btn_edit_setting">Edit Setting</string>
     <string name="no_setting">Belum Ada Setting</string>
+    <string name="menu_sync">SYNC</string>
 </resources>

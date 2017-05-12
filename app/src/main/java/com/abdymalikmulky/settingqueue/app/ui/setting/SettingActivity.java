@@ -2,6 +2,9 @@ package com.abdymalikmulky.settingqueue.app.ui.setting;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,18 +13,23 @@ import android.widget.Toast;
 import com.abdymalikmulky.settingqueue.R;
 import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
+import com.abdymalikmulky.settingqueue.app.data.setting.SettingSp;
 import com.abdymalikmulky.settingqueue.helper.DateTimeHelper;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SettingActivity extends AppCompatActivity implements SettingContract.View{
 
-    TextView tvSettingResult;
-    Button btnSetting;
+    private TextView tvSettingResult;
+    private Button btnSetting;
 
-    long pondId;
+    private long pondId;
+    private String pondClientId;
+
+    private SettingSp settingSp;
 
     private JobManager jobManager;
 
@@ -33,8 +41,11 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
         setContentView(R.layout.activity_setting);
 
         pondId = getIntent().getLongExtra("pond_id", 0);
+        pondClientId = getIntent().getStringExtra("pond_client_id");
 
         jobManager = SettingQueueApplication.get().getJobManager();
+
+        settingSp = new SettingSp(getApplicationContext());
 
         mSettingPresenter = new SettingPresenter(this, jobManager);
 
@@ -48,7 +59,9 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
             @Override
             public void onClick(View v) {
                 Setting setting = new Setting();
-                setting.setId(1);
+                setting.setId(settingSp.getLastSettingId());
+                setting.setClientId(UUID.randomUUID().toString());
+                setting.setPondClientId(pondClientId);
                 setting.setFishWeight((int) ((System.currentTimeMillis()%3)*1000));
                 setting.setFeedWeight((int) ((System.currentTimeMillis()%3)*10));
                 setting.setFreq(5);
@@ -64,6 +77,23 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.setting_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_sync:
+                mSettingPresenter.syncSetting(pondId);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void setPresenter(SettingContract.Presenter presenter) {
@@ -73,6 +103,7 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
     @Override
     public void showSetting(List<Setting> settings) {
         tvSettingResult.setText(settings.get(0).toString());
+        btnSetting.setText(getString(R.string.btn_edit_setting));
     }
 
     @Override
@@ -91,7 +122,7 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
     protected void onStart() {
         super.onStart();
         mSettingPresenter.start();
-        mSettingPresenter.loadSetting(pondId);
+        mSettingPresenter.syncSetting(pondId);
     }
 
     @Override

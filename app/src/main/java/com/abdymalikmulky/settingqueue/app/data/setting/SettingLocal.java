@@ -1,12 +1,13 @@
 package com.abdymalikmulky.settingqueue.app.data.setting;
 
-import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
-import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
-import com.abdymalikmulky.settingqueue.app.data.pond.Pond_Table;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
+
+import timber.log.Timber;
+
+import static com.raizlabs.android.dbflow.sql.language.Method.count;
 
 /**
  * Created by efishery on 09/05/17.
@@ -15,6 +16,12 @@ import java.util.List;
 public class SettingLocal implements SettingDataSource {
 
     public SettingLocal() {
+    }
+
+    public Setting get(long id){
+        Setting setting = SQLite.select().from(Setting.class)
+                .where(Setting_Table.id.eq(id)).querySingle();
+        return setting;
     }
 
     @Override
@@ -34,8 +41,7 @@ public class SettingLocal implements SettingDataSource {
     @Override
     public void save(Setting newSetting, SaveSettingCallback callback) {
         long settingRemoteId = 0;
-        Setting setting = new Setting();
-        setting = newSetting;
+        Setting setting = newSetting;
         settingRemoteId = setting.insert();
 
         if(settingRemoteId > 0){
@@ -43,6 +49,54 @@ public class SettingLocal implements SettingDataSource {
             callback.onSaved(setting);
         }else{
             callback.onFailed(new Throwable());
+        }
+    }
+
+    public void updateAll(Setting settingUpdate, SaveSettingCallback callback){
+        SQLite.update(Setting.class)
+                .set(Setting_Table.feedWeight.eq(settingUpdate.feedWeight),
+                        Setting_Table.fishWeight.eq(settingUpdate.fishWeight),
+                        Setting_Table.freq.eq(settingUpdate.freq))
+                .where(Setting_Table.clientId.is(settingUpdate.getClientId()))
+                .async()
+                .execute();
+        callback.onSaved(settingUpdate);
+    }
+
+    public boolean isExist(String clientId){
+        int size = (int) SQLite.select(count(Setting_Table.clientId)).from(Setting.class)
+                .where(Setting_Table.clientId.eq(clientId)).count();
+        return (size > 0) ? true : false;
+    }
+
+    //TODO :: deleted data atau flagging ?? buat di feeder in pond
+    public void saveOrUpdate(List<Setting> settings){
+        for (Setting setting : settings) {
+            if(isExist(setting.getClientId())){
+                updateAll(setting, new SaveSettingCallback() {
+                    @Override
+                    public void onSaved(Setting setting) {
+                        Timber.d("SaveOrUpdate %s %s","Update",setting.toString());
+                    }
+                    @Override
+                    public void onFailed(Throwable t) {
+                        Timber.d("SaveOrUpdate %s %s","Update-Fail",t.toString());
+                    }
+                });
+            }else{
+                setting.setSyncState(AppUtils.STATE_SYNCED);
+                save(setting, new SaveSettingCallback() {
+                    @Override
+                    public void onSaved(Setting setting) {
+                        Timber.d("SaveOrUpdate %s %s","SAVE",setting.toString());
+                    }
+
+                    @Override
+                    public void onFailed(Throwable t) {
+                        Timber.d("SaveOrUpdate %s %s","SAVE-fail",t.toString());
+                    }
+                });
+            }
         }
     }
 
@@ -57,16 +111,15 @@ public class SettingLocal implements SettingDataSource {
                 .execute();
     }
 
-    public void update(Pond pondUpdate, PondDataSource.SavePondCallback callback){
-        SQLite.update(Pond.class)
-                .set(Pond_Table.syncState.eq(AppUtils.STATE_SYNCED),
-                        Pond_Table.id.eq(pondUpdate.getId()),
-                        Pond_Table.createdAt.eq(pondUpdate.getCreatedAt()),
-                        Pond_Table.updatedAt.eq(pondUpdate.getUpdatedAt()))
-                .where(Pond_Table.clientId.is(pondUpdate.getClientId()))
+    public void updateSync(Setting settingUpdate, SaveSettingCallback callback){
+        SQLite.update(Setting.class)
+                .set(Setting_Table.syncState.eq(AppUtils.STATE_SYNCED),
+                        Setting_Table.createdAt.eq(settingUpdate.getCreatedAt()))
+                .where(Setting_Table.clientId.is(settingUpdate.getClientId()))
                 .async()
                 .execute();
-        callback.onSaved(pondUpdate);
+        callback.onSaved(settingUpdate);
     }
+
 
 }
