@@ -5,10 +5,10 @@ package com.abdymalikmulky.settingqueue.app.events.setting;
  * Created by abdymalikmulky on 5/12/17.
  */
 
-public class FetchingSettingEvent {
+public class FetchedSettingEvent {
     long pondId;
 
-    public FetchingSettingEvent(long pondId) {
+    public FetchedSettingEvent(long pondId) {
         this.pondId = pondId;
     }
 

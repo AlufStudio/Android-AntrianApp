@@ -7,7 +7,7 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
-import com.abdymalikmulky.settingqueue.app.events.setting.FetchingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.FetchedSettingEvent;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -39,7 +39,7 @@ public class FetchSettingByPondJob extends Job{
     public void onAdded() {
         Timber.d("onAdded-Fetch-Setting | %s",pondId);
         //load di local dulu untuk UI
-        EventBus.getDefault().post(new FetchingSettingEvent(pondId));
+        EventBus.getDefault().post(new FetchedSettingEvent(pondId));
     }
     @Override
     public void onRun() throws Throwable {
@@ -52,14 +52,14 @@ public class FetchSettingByPondJob extends Job{
 
                 new SettingLocal().saveOrUpdate(settings);
 
-                EventBus.getDefault().post(new FetchingSettingEvent(pondId));
+                EventBus.getDefault().post(new FetchedSettingEvent(pondId));
             }
 
             @Override
             public void onNoData(String msg) {
                 Timber.d("onRun-Fetch-Setting-noData | %s",pondId);
 
-                EventBus.getDefault().post(new FetchingSettingEvent(pondId));
+                EventBus.getDefault().post(new FetchedSettingEvent(pondId));
             }
 
             @Override

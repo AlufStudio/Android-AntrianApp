@@ -7,7 +7,7 @@ import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
 import com.abdymalikmulky.settingqueue.app.events.setting.CreatingSettingEvent;
 import com.abdymalikmulky.settingqueue.app.events.setting.DeletedSettingEvent;
-import com.abdymalikmulky.settingqueue.app.events.setting.FetchingSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.FetchedSettingEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.CreateSettingJob;
 import com.abdymalikmulky.settingqueue.app.jobs.FetchSettingByPondJob;
 import com.birbit.android.jobqueue.JobManager;
@@ -95,7 +95,7 @@ public class SettingPresenter implements SettingContract.Presenter {
         loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(FetchingSettingEvent settingEvent) {
+    public void onMessageEvent(FetchedSettingEvent settingEvent) {
         loadSetting(settingEvent.getPondId());
     }
 
