@@ -45,6 +45,11 @@ public class SettingRemote implements SettingDataSource {
     }
 
     @Override
+    public void getLast(long pondId, GetLastSettingCallback callback) {
+
+    }
+
+    @Override
     public void save(Setting setting, SaveSettingCallback callback) {
 
     }

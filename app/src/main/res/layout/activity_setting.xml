@@ -25,4 +25,10 @@
         android:text="@string/btn_new_setting"
         android:onClick="setting()"/>
 
+    <TextView
+        android:id="@+id/tv_setting_process"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_setting" />
+
 </RelativeLayout>

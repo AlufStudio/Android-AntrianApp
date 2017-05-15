@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android-AntrianApp.iml" filepath="$PROJECT_DIR$/Android-AntrianApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/SettingQueue.iml" filepath="$PROJECT_DIR$/SettingQueue.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/feederconnector/feederconnector.iml" filepath="$PROJECT_DIR$/feederconnector/feederconnector.iml" />
     </modules>
   </component>
 </project>

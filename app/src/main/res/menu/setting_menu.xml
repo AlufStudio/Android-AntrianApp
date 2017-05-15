@@ -5,5 +5,10 @@
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/menu_sync"
         android:showAsAction="always"/>
+    <item android:id="@+id/menu_sync_feeder"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/menu_sync_feeder"
+        android:showAsAction="always"/>
+
 
 </menu>

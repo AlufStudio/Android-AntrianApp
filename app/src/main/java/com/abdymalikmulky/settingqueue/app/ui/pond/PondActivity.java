@@ -130,6 +130,7 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         Intent intent = new Intent(PondActivity.this, SettingActivity.class);
         intent.putExtra("pond_id", pond.getId());
         intent.putExtra("pond_client_id", pond.getClientId());
+        intent.putExtra("pond_name", pond.getName());
         startActivity(intent);
     }
 }

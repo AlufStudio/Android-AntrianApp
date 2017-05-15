@@ -61,6 +61,7 @@ public class Setting extends BaseModel implements Serializable {
 
     public Setting() {
     }
+
     public long getId() {
         return id;
     }

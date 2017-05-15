@@ -12,6 +12,10 @@ public class AppUtils {
     public final static String STATE_SYNCED = "SYNCED";
     public final static String STATE_NOT_SYNCED = "NOTSYNCED";
 
+    //FEEDER DUMMY
+    public final static String DUMMY_SSID = "efishery_0003C";
+    public final static String DUMMY_TOKEN = "4-SB7wWr77Xv77";
+
 
     public static String getSaltString() {
         String SALTCHARS = "efisheryEFISHERY2516";

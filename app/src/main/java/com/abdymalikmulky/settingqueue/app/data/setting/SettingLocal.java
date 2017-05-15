@@ -2,6 +2,7 @@ package com.abdymalikmulky.settingqueue.app.data.setting;
 
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 
 import java.util.List;
 
@@ -33,6 +34,20 @@ public class SettingLocal implements SettingDataSource {
                 .queryList();
         if(settings.size() > 0){
             callback.onLoaded(settings);
+        }else {
+            callback.onNoData("No Data");
+        }
+    }
+
+    @Override
+    public void getLast(long pondId, GetLastSettingCallback callback) {
+       Where<Setting> queryWhere = SQLite.select()
+                .from(Setting.class)
+                .where(Setting_Table.pondId.eq(pondId));
+        Setting setting = queryWhere.querySingle();
+
+        if(queryWhere.count() > 0){
+            callback.onGet(setting);
         }else {
             callback.onNoData("No Data");
         }

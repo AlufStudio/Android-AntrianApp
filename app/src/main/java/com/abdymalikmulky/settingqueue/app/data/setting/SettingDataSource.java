@@ -13,6 +13,12 @@ public interface SettingDataSource {
         void onNoData(String msg);
         void onFailed(Throwable t) throws Throwable;
     }
+    interface GetLastSettingCallback {
+        void onGet(Setting setting);
+        void onNoData(String msg);
+        void onFailed(String msg);
+    }
+
     interface SaveSettingCallback {
         void onSaved(Setting setting);
         void onFailed(Throwable t);
@@ -24,6 +30,8 @@ public interface SettingDataSource {
 
 
     void load(long pondId, LoadSettingCallback callback);
+
+    void getLast(long pondId, GetLastSettingCallback callback);
 
     void save(Setting setting, SaveSettingCallback callback) throws Throwable;
 

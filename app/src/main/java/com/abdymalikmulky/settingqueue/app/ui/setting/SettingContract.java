@@ -9,17 +9,24 @@ import java.util.List;
 public interface SettingContract {
 
     interface View extends BaseView<Presenter> {
-        void showSetting(List<Setting> settings);
+        void showSettings(List<Setting> settings);
 
         void showNoSetting(String msg);
 
-        void showNewSetting(Setting setting);
+        void showSettingFeeder(Setting setting);
+
+        void showFailSetting(int code, String message);
     }
     interface Presenter extends BasePresenter {
         void loadSetting(long pondId);
 
-        void syncSetting(long pondId);
+        void loadSettingRemote(long pondId);
+
+        void loadSettingFeeder(long pondId);
 
         void saveSetting(long pondId, Setting setting) throws Throwable;
+
+        void saveSettingWithFeeder(long pondId, Setting setting) throws Throwable;
+
     }
 }

@@ -1,8 +1,10 @@
 package com.abdymalikmulky.settingqueue.app.ui.setting;
 
 
+import com.abdymalikmulky.feederconnector.FeederApiClient;
 import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
+import com.abdymalikmulky.settingqueue.app.data.setting.SettingFeeder;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncedEvent;
@@ -28,14 +30,18 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     JobManager jobManager;
 
+
     SettingLocal settingLocal;
     SettingRemote settingRemote;
+    SettingFeeder settingFeeder;
 
-    public SettingPresenter(SettingContract.View settingView, JobManager jobManager) {
+    public SettingPresenter(SettingContract.View settingView, JobManager jobManager, FeederApiClient feederApiClient) {
         this.jobManager = jobManager;
 
         settingLocal = new SettingLocal();
         settingRemote = new SettingRemote();
+        //repo feeder
+        settingFeeder = new SettingFeeder(feederApiClient);
 
         mSettingView = settingView;
         mSettingView.setPresenter(this);
@@ -55,13 +61,12 @@ public class SettingPresenter implements SettingContract.Presenter {
         }
     }
 
-
     @Override
     public void loadSetting(long pondId) {
         settingLocal.load(pondId, new SettingDataSource.LoadSettingCallback() {
             @Override
             public void onLoaded(List<Setting> settings) {
-                mSettingView.showSetting(settings);
+                mSettingView.showSettings(settings);
             }
 
             @Override
@@ -76,24 +81,75 @@ public class SettingPresenter implements SettingContract.Presenter {
     }
 
     @Override
-    public void syncSetting(long pondId) {
+    public void loadSettingRemote(long pondId) {
         jobManager.addJobInBackground(new FetchSettingByPondJob(pondId));
     }
 
     @Override
-    public void saveSetting(long pondId, Setting setting) {
+    public void loadSettingFeeder(final long pondId) {
+        settingFeeder.getLast(pondId, new SettingDataSource.GetLastSettingCallback() {
+            @Override
+            public void onGet(Setting setting) {
+                Timber.d("SettingFeeder %s", setting.toString());
+                //get last setting untuk keperluan kelengkapan data pada dashboard, sebagai pelengkap data yang tidak ada di feeder
+                settingLocal.getLast(pondId, new SettingDataSource.GetLastSettingCallback() {
+                    @Override
+                    public void onGet(Setting setting) {
+                        mSettingView.showSettingFeeder(setting);
+                        Timber.d("SettingLocal %s", setting.toString());
+                    }
+                    @Override
+                    public void onNoData(String msg) {
+                        mSettingView.showNoSetting(msg);
+                    }
+                    @Override
+                    public void onFailed(String msg) {
+                        mSettingView.showFailSetting(666, msg);
+                    }
+                });
+            }
+
+            @Override
+            public void onNoData(String msg) {
+                mSettingView.showNoSetting(msg);
+
+            }
+
+            @Override
+            public void onFailed(String msg) {
+                mSettingView.showFailSetting(666, msg);
+
+            }
+        });
+    }
+
+    @Override
+    public void saveSettingWithFeeder(long pondId, Setting setting) throws Throwable {
         setting.setPondId(pondId);
+        settingFeeder.save(setting, new SettingDataSource.SaveSettingCallback() {
+            @Override
+            public void onSaved(Setting setting) {
+                Timber.d("FeederApiClient %s", setting.toString());
+                jobManager.addJobInBackground(new CreateSettingJob(setting));
+            }
+            @Override
+            public void onFailed(Throwable t) {
+                mSettingView.showFailSetting(666, t.toString());
+            }
+        });
+    }
+
+    @Override
+    public void saveSetting(long pondId, Setting setting) throws Throwable {
         jobManager.addJobInBackground(new CreateSettingJob(setting));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingCreatedSyncingEvent settingEvent) {
-        Timber.d("EventRun %s",settingEvent.getSetting().toString());
         loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingCreatedSyncedEvent settingEvent) {
-        Timber.d("EventRun %s",settingEvent.getSetting().toString());
         loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
