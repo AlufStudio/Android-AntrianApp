@@ -6,8 +6,9 @@ import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRepo;
-import com.abdymalikmulky.settingqueue.app.events.pond.CreatingPondEvent;
-import com.abdymalikmulky.settingqueue.app.events.pond.DeletedPondEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondCreatedSyncedEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondCreatedSyncingEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondDeletedEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.CreatePondJob;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
@@ -62,17 +63,22 @@ public class PondPresenter implements PondContract.Presenter {
 
     @Override
     public void loadPonds() {
-        pondRepo.loadLocal(new PondDataSource.LoadPondCallback() {
-            @Override
-            public void onLoaded(List<Pond> ponds) {
-                mPondView.showPonds(ponds);
-            }
+        new android.os.Handler().postDelayed(
+            new Runnable() {
+                public void run() {
+                    pondRepo.loadLocal(new PondDataSource.LoadPondCallback() {
+                        @Override
+                        public void onLoaded(List<Pond> ponds) {
+                            mPondView.showPonds(ponds);
+                        }
 
-            @Override
-            public void onNoData(String msg) {
-                mPondView.showNoPond();
-            }
-        });
+                        @Override
+                        public void onNoData(String msg) {
+                            mPondView.showNoPond();
+                        }
+                    });
+                }
+            }, 300);
     }
 
     @Override
@@ -110,12 +116,19 @@ public class PondPresenter implements PondContract.Presenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(CreatingPondEvent pondEvent) {
+    public void onMessageEvent(PondCreatedSyncingEvent pondEvent) {
         Timber.d("EventRun %s",pondEvent.getPond().toString());
         loadPonds();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(DeletedPondEvent pondEvent) {
+    public void onMessageEvent(PondCreatedSyncedEvent pondEvent) {
+        Timber.d("EventRun %s",pondEvent.getPond().toString());
+        loadPonds();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(PondDeletedEvent pondEvent) {
         mPondView.showDeletedPond(pondEvent.getPond());
         loadPonds();
     }

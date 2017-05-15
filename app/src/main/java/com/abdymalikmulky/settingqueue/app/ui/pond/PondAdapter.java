@@ -44,7 +44,7 @@ public class PondAdapter extends RecyclerView.Adapter<PondAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Pond pond = ponds.get(position);
-        Timber.d("DataPonds : %s. %s",position, pond.toString());
+        Timber.d("DataPondsAdapteer : %s. %s",position, pond.toString());
 
         holder.tvPondName.setText(pond.getName());
         holder.tvPondUser.setText(String.valueOf(pond.getClientId()));

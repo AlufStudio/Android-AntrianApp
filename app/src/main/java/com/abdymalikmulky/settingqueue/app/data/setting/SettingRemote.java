@@ -2,7 +2,7 @@ package com.abdymalikmulky.settingqueue.app.data.setting;
 
 import com.abdymalikmulky.settingqueue.app.data.setting.response.SettingNewResponse;
 import com.abdymalikmulky.settingqueue.app.data.setting.response.SettingResponse;
-import com.abdymalikmulky.settingqueue.app.jobs.NetworkException;
+import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
 import com.abdymalikmulky.settingqueue.helper.ApiHelper;
 
 import java.util.List;

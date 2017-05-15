@@ -5,9 +5,10 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
-import com.abdymalikmulky.settingqueue.app.events.setting.CreatingSettingEvent;
-import com.abdymalikmulky.settingqueue.app.events.setting.DeletedSettingEvent;
-import com.abdymalikmulky.settingqueue.app.events.setting.FetchedSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncedEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingDeletedEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingFetchedEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.CreateSettingJob;
 import com.abdymalikmulky.settingqueue.app.jobs.FetchSettingByPondJob;
 import com.birbit.android.jobqueue.JobManager;
@@ -86,16 +87,21 @@ public class SettingPresenter implements SettingContract.Presenter {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(CreatingSettingEvent settingEvent) {
+    public void onMessageEvent(SettingCreatedSyncingEvent settingEvent) {
         Timber.d("EventRun %s",settingEvent.getSetting().toString());
         loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(DeletedSettingEvent settingEvent) {
+    public void onMessageEvent(SettingCreatedSyncedEvent settingEvent) {
+        Timber.d("EventRun %s",settingEvent.getSetting().toString());
         loadSetting(settingEvent.getSetting().getPondId());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(FetchedSettingEvent settingEvent) {
+    public void onMessageEvent(SettingDeletedEvent settingEvent) {
+        loadSetting(settingEvent.getSetting().getPondId());
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SettingFetchedEvent settingEvent) {
         loadSetting(settingEvent.getPondId());
     }
 

@@ -7,8 +7,12 @@ import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondDataSource;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondLocal;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondRemote;
-import com.abdymalikmulky.settingqueue.app.events.pond.CreatingPondEvent;
-import com.abdymalikmulky.settingqueue.app.events.pond.DeletedPondEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondCreatedSyncedEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondCreatedSyncingEvent;
+import com.abdymalikmulky.settingqueue.app.events.pond.PondDeletedEvent;
+import com.abdymalikmulky.settingqueue.app.jobs.util.Group;
+import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
+import com.abdymalikmulky.settingqueue.app.jobs.util.Priority;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -40,7 +44,7 @@ public class CreatePondJob extends Job{
             @Override
             public void onSaved(Pond pond) {
                 Timber.d("onAdded | %s ", pond.toString());
-                EventBus.getDefault().post(new CreatingPondEvent(pond));
+                EventBus.getDefault().post(new PondCreatedSyncingEvent(pond));
             }
             @Override
             public void onFailed(Throwable t) {
@@ -55,16 +59,16 @@ public class CreatePondJob extends Job{
         new PondRemote().save(pond, new PondDataSource.SaveRemotePondCallback() {
             @Override
             public void onSaved(Pond pond) {
-                Timber.d("OnRunRemote | %s ", pond.toString());
+                Timber.d("onRunRemote | %s ", pond.toString());
                 new PondLocal().update(pond, new PondDataSource.SavePondCallback() {
                     @Override
                     public void onSaved(Pond pond) {
-                        Timber.d("OnRunRemoteUpdate | %s ", pond.toString());
-                        EventBus.getDefault().post(new CreatingPondEvent(pond));
+                        Timber.d("onRunRemoteUpdate | %s ", pond.toString());
+                        EventBus.getDefault().post(new PondCreatedSyncedEvent(pond));
                     }
                     @Override
                     public void onFailed(Throwable t) {
-                        Timber.d("OnRunFail | %s ", t.toString());
+                        Timber.d("onRunFail | %s ", t.toString());
                     }
                 });
             }
@@ -78,7 +82,7 @@ public class CreatePondJob extends Job{
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         new PondLocal().delete(pond);
-        EventBus.getDefault().post(new DeletedPondEvent(pond));
+        EventBus.getDefault().post(new PondDeletedEvent(pond));
         Timber.d("onCancel | JobJob %s", throwable.toString());
     }
 

@@ -2,7 +2,7 @@ package com.abdymalikmulky.settingqueue.app.data.pond;
 
 import com.abdymalikmulky.settingqueue.app.data.pond.response.PondNewResponse;
 import com.abdymalikmulky.settingqueue.app.data.pond.response.PondResponse;
-import com.abdymalikmulky.settingqueue.app.jobs.NetworkException;
+import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
 import com.abdymalikmulky.settingqueue.helper.ApiHelper;
 
 import java.util.List;
@@ -30,11 +30,17 @@ public class PondRemote {
         call.enqueue(new Callback<PondResponse>() {
             @Override
             public void onResponse(Call<PondResponse> call, Response<PondResponse> response) {
-                List<Pond> ponds = response.body().getPonds();
-                if(ponds.size() == 0){
-                    callback.onNoData("NO Data");
+                if(response.isSuccessful()){
+                    List<Pond> ponds = response.body().getPonds();
+                    if(ponds.size() == 0){
+                        callback.onNoData("NO Data");
+                    }else{
+                        callback.onLoaded(ponds);
+                    }
+
                 }else{
-                    callback.onLoaded(ponds);
+                    callback.onNoData("NO Data");
+
                 }
 
             }

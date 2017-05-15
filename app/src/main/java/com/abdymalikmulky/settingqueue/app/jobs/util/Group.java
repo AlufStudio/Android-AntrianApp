@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.jobs;
+package com.abdymalikmulky.settingqueue.app.jobs.util;
 
 public class Group {
     public static String SAVE_POND = "save_pond";

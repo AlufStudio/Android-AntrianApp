@@ -7,8 +7,11 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
-import com.abdymalikmulky.settingqueue.app.events.setting.CreatingSettingEvent;
-import com.abdymalikmulky.settingqueue.app.events.setting.DeletedSettingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncingEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingDeletedEvent;
+import com.abdymalikmulky.settingqueue.app.jobs.util.Group;
+import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
+import com.abdymalikmulky.settingqueue.app.jobs.util.Priority;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -40,7 +43,7 @@ public class CreateSettingJob extends Job{
                 @Override
                 public void onSaved(Setting setting) {
                     Timber.d("onAdded-Setting | %s ", setting.toString());
-                    EventBus.getDefault().post(new CreatingSettingEvent(setting));
+                    EventBus.getDefault().post(new SettingCreatedSyncingEvent(setting));
                 }
                 @Override
                 public void onFailed(Throwable t) {
@@ -63,7 +66,7 @@ public class CreateSettingJob extends Job{
                     @Override
                     public void onSaved(Setting setting) {
                         Timber.d("OnRunRemoteUpdate-Setting | %s ", setting.toString());
-                        EventBus.getDefault().post(new CreatingSettingEvent(setting));
+                        EventBus.getDefault().post(new SettingCreatedSyncingEvent(setting));
                     }
 
                     @Override
@@ -83,7 +86,7 @@ public class CreateSettingJob extends Job{
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         new SettingLocal().delete(setting);
-        EventBus.getDefault().post(new DeletedSettingEvent(setting));
+        EventBus.getDefault().post(new SettingDeletedEvent(setting));
         Timber.d("onCancel-Setting %s", throwable.toString());
 
     }

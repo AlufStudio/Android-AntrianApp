@@ -21,7 +21,7 @@ public class PondLocal implements PondDataSource {
     public void load(LoadPondCallback callback) {
         List<Pond> ponds = SQLite.select()
                 .from(Pond.class)
-                .orderBy(Pond_Table.id,false)
+                .orderBy(Pond_Table.createdAt,false)
                 .queryList();
         if(ponds.size() > 0){
             callback.onLoaded((ArrayList<Pond>) ponds);

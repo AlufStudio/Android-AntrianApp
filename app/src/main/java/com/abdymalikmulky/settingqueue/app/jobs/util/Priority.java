@@ -1,4 +1,4 @@
-package com.abdymalikmulky.settingqueue.app.jobs;
+package com.abdymalikmulky.settingqueue.app.jobs.util;
 
 public class Priority {
     public static int LOW = 0;

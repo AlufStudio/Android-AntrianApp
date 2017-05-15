@@ -13,6 +13,7 @@ import com.abdymalikmulky.settingqueue.SettingQueueApplication;
 import com.abdymalikmulky.settingqueue.app.data.pond.Pond;
 import com.abdymalikmulky.settingqueue.app.data.pond.PondSp;
 import com.abdymalikmulky.settingqueue.app.ui.setting.SettingActivity;
+import com.abdymalikmulky.settingqueue.helper.DateTimeHelper;
 import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
@@ -70,6 +71,9 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
         pond.setUserId(1);
         pond.setClientId(UUID.randomUUID().toString());
         pond.setSyncState(AppUtils.STATE_NOT_SYNCED);
+        pond.setCreatedAt(DateTimeHelper.getCurrentDateISO());
+        pond.setUpdatedAt(DateTimeHelper.getCurrentDateISO());
+
 
 
         mPondPresenter.savePond(pond);
@@ -82,6 +86,8 @@ public class PondActivity extends AppCompatActivity implements PondContract.View
 
     @Override
     public void showPonds(List<Pond> ponds) {
+        Timber.d("DataPondsActivity : %s", ponds.toString());
+
         pondAdapter.replace(ponds);
     }
 

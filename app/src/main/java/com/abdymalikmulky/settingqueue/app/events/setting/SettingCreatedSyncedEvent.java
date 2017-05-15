@@ -6,10 +6,10 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
  * Created by efishery on 04/05/17.
  */
 
-public class CreatingSettingEvent {
+public class SettingCreatedSyncedEvent {
     private Setting setting;
 
-    public CreatingSettingEvent(Setting setting) {
+    public SettingCreatedSyncedEvent(Setting setting) {
         this.setting = setting;
     }
 

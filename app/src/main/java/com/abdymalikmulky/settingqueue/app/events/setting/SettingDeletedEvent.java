@@ -6,10 +6,10 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
  * Created by efishery on 04/05/17.
  */
 
-public class DeletedSettingEvent {
+public class SettingDeletedEvent {
     private Setting setting;
 
-    public DeletedSettingEvent(Setting setting) {
+    public SettingDeletedEvent(Setting setting) {
         this.setting = setting;
     }
 
