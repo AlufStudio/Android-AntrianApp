@@ -7,8 +7,8 @@ import com.abdymalikmulky.settingqueue.app.data.setting.Setting;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncedEvent;
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncingEvent;
-import com.abdymalikmulky.settingqueue.app.events.setting.SettingDeletedEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.util.Group;
 import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
 import com.abdymalikmulky.settingqueue.app.jobs.util.Priority;
@@ -39,21 +39,22 @@ public class CreateSettingJob extends Job{
 
     @Override
     public void onAdded() {
-            new SettingLocal().save(setting, new SettingDataSource.SaveSettingCallback() {
-                @Override
-                public void onSaved(Setting setting) {
-                    Timber.d("onAdded-Setting | %s ", setting.toString());
-                    EventBus.getDefault().post(new SettingCreatedSyncingEvent(setting));
-                }
-                @Override
-                public void onFailed(Throwable t) {
-                    Timber.e("Fail-Local %s", t.toString());
-                }
-            });
+        new SettingLocal().save(setting, new SettingDataSource.SaveSettingCallback() {
+            @Override
+            public void onSaved(Setting setting) {
+                Timber.d("onAdded-Setting | %s ", setting.toString());
+                EventBus.getDefault().post(new SettingCreatedSyncingEvent(setting));
+            }
+
+            @Override
+            public void onFailed(Throwable t) {
+                Timber.e("Fail-Local %s", t.toString());
+            }
+        });
     }
     @Override
     public void onRun() throws Throwable {
-        Timber.d("OnRun-Setting | %s", setting.toString());
+        Timber.d("onRun-Setting | %s", setting.toString());
         //updated pondId LOGS
         Setting newSetting = new SettingLocal().get(setting.getId());
         Timber.d("Data-Setting %s",setting.toString());
@@ -61,17 +62,17 @@ public class CreateSettingJob extends Job{
         new SettingRemote().save(newSetting, new SettingDataSource.SaveRemoteSettingCallback() {
             @Override
             public void onSaved(Setting setting) {
-                Timber.d("OnRunRemote-Setting | %s ", setting.toString());
+                Timber.d("onRunRemote-Setting | %s ", setting.toString());
                 new SettingLocal().updateSync(setting, new SettingDataSource.SaveSettingCallback() {
                     @Override
                     public void onSaved(Setting setting) {
-                        Timber.d("OnRunRemoteUpdate-Setting | %s ", setting.toString());
-                        EventBus.getDefault().post(new SettingCreatedSyncingEvent(setting));
+                        Timber.d("onRunRemoteUpdate-Setting | %s ", setting.toString());
+                        EventBus.getDefault().post(new SettingCreatedSyncedEvent(setting));
                     }
 
                     @Override
                     public void onFailed(Throwable t) {
-                        Timber.d("OnRunFail-Setting | %s ", t.toString());
+                        Timber.d("onRunFail-Setting | %s ", t.toString());
                     }
                 });
             }
@@ -85,10 +86,9 @@ public class CreateSettingJob extends Job{
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
-        new SettingLocal().delete(setting);
-        EventBus.getDefault().post(new SettingDeletedEvent(setting));
-        Timber.d("onCancel-Setting %s", throwable.toString());
-
+//        new SettingLocal().delete(setting);
+//        EventBus.getDefault().post(new SettingDeletedEvent(setting));
+//        Timber.d("onCancel-Setting %s", throwable.toString());
     }
 
 
@@ -109,7 +109,7 @@ public class CreateSettingJob extends Job{
 
             return constraint;
         }
-        return RetryConstraint.CANCEL;
+        return RetryConstraint.RETRY;
     }
 
 

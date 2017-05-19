@@ -8,6 +8,7 @@ import com.abdymalikmulky.settingqueue.app.data.setting.SettingDataSource;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingLocal;
 import com.abdymalikmulky.settingqueue.app.data.setting.SettingRemote;
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingFetchedEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingFetchingEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.util.Group;
 import com.abdymalikmulky.settingqueue.app.jobs.util.NetworkException;
 import com.abdymalikmulky.settingqueue.app.jobs.util.Priority;
@@ -34,7 +35,7 @@ public class FetchSettingByPondJob extends Job{
     private long pondId;
 
     public FetchSettingByPondJob(long pondId) {
-        super(new Params(Priority.MID).requireNetwork().persist().groupBy(Group.POST_JOB));
+        super(new Params(Priority.LOW).requireNetwork().persist().groupBy(Group.POST_JOB));
         this.pondId = pondId;
     }
 
@@ -42,11 +43,12 @@ public class FetchSettingByPondJob extends Job{
     public void onAdded() {
         Timber.d("onAdded-Fetch-Setting | %s",pondId);
         //load di local dulu untuk UI
-        EventBus.getDefault().post(new SettingFetchedEvent(pondId));
+        EventBus.getDefault().post(new SettingFetchingEvent(pondId));
     }
     @Override
     public void onRun() throws Throwable {
         //OnRun|onAdded|Kegagalan|DataFail|OnReRun|onCancel
+        //TODO:: tambahin update pondId, ganti fielnya harusnya make pond client id
         Timber.d("onRun-Fetch-Setting | %s",pondId);
         new SettingRemote().load(pondId, new SettingDataSource.LoadSettingCallback() {
             @Override

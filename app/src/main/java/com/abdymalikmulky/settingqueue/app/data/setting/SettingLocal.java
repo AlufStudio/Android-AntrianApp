@@ -20,9 +20,8 @@ public class SettingLocal implements SettingDataSource {
     }
 
     public Setting get(long id){
-        Setting setting = SQLite.select().from(Setting.class)
+        return SQLite.select().from(Setting.class)
                 .where(Setting_Table.id.eq(id)).querySingle();
-        return setting;
     }
 
     @Override
@@ -55,16 +54,30 @@ public class SettingLocal implements SettingDataSource {
 
     @Override
     public void save(Setting newSetting, SaveSettingCallback callback) {
-        long settingRemoteId = 0;
-        Setting setting = newSetting;
-        settingRemoteId = setting.insert();
+        if (!isExist(newSetting.getClientId())) {
+            long settingRemoteId = 0;
+            Setting setting = newSetting;
+            settingRemoteId = setting.insert();
 
-        if(settingRemoteId > 0){
-            setting.setId((int) settingRemoteId);
-            callback.onSaved(setting);
-        }else{
-            callback.onFailed(new Throwable());
+            if (settingRemoteId > 0) {
+                setting.setId((int) settingRemoteId);
+                callback.onSaved(setting);
+            } else {
+                callback.onFailed(new Throwable());
+            }
         }
+
+    }
+
+    @Override
+    public void save(Setting setting, SaveRemoteSettingCallback callback) throws Throwable {
+    }
+
+    public void delete(Setting setting) {
+        SQLite.delete(Setting.class)
+                .where(Setting_Table.clientId.is(setting.getClientId()))
+                .async()
+                .execute();
     }
 
     public void updateAll(Setting settingUpdate, SaveSettingCallback callback){
@@ -81,7 +94,7 @@ public class SettingLocal implements SettingDataSource {
     public boolean isExist(String clientId){
         int size = (int) SQLite.select(count(Setting_Table.clientId)).from(Setting.class)
                 .where(Setting_Table.clientId.eq(clientId)).count();
-        return (size > 0) ? true : false;
+        return size > 0;
     }
 
     //TODO :: deleted data atau flagging ?? buat di feeder in pond
@@ -115,15 +128,18 @@ public class SettingLocal implements SettingDataSource {
         }
     }
 
-    @Override
-    public void save(Setting setting, SaveRemoteSettingCallback callback) throws Throwable {
-    }
-
-    public void delete(Setting setting){
-        SQLite.delete(Setting.class)
-                .where(Setting_Table.clientId.is(setting.getClientId()))
-                .async()
-                .execute();
+    public void getNotSynced(long pondId, LoadSettingCallback callback) {
+        List<Setting> settings = SQLite.select()
+                .from(Setting.class)
+                .where(Setting_Table.pondId.eq(pondId))
+                .and(Setting_Table.syncState.eq(AppUtils.STATE_NOT_SYNCED))
+                .orderBy(Setting_Table.createdAt, false)
+                .queryList();
+        if (settings.size() > 0) {
+            callback.onLoaded(settings);
+        } else {
+            callback.onNoData("No Data");
+        }
     }
 
     public void updateSync(Setting settingUpdate, SaveSettingCallback callback){
@@ -136,6 +152,5 @@ public class SettingLocal implements SettingDataSource {
                 .execute();
         callback.onSaved(settingUpdate);
     }
-
 
 }

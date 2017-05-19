@@ -20,6 +20,7 @@ import com.abdymalikmulky.settingqueue.util.AppUtils;
 import com.birbit.android.jobqueue.JobManager;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -98,17 +99,24 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
             setting.setId(settingSp.getLastSettingId());
             setting.setClientId(UUID.randomUUID().toString());
             setting.setPondClientId(pondClientId);
-            setting.setFishWeight((int) ((System.currentTimeMillis()%3)*1000));
-            setting.setFeedWeight((int) ((System.currentTimeMillis()%3)*10));
-            setting.setFreq(5);
+                setting.setFishWeight((new Random().nextInt(19) + 1) * 1000);
+                setting.setFeedWeight((new Random().nextInt(19) + 10));
+                setting.setFreq((new Random().nextInt(38) + 1));
             setting.setCreatedAt(DateTimeHelper.getCurrentDateISO());
             setting.setSyncState(AppUtils.STATE_NOT_SYNCED);
+                Timber.d("SETTING %s", setting.toString());
 
-            try {
+                try {
+                    mSettingPresenter.saveSetting(pondId, setting);
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+
+            /*try {
                 mSettingPresenter.saveSettingWithFeeder(pondId, setting);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
-            }
+            }*/
             }
         });
     }
@@ -182,6 +190,11 @@ public class SettingActivity extends AppCompatActivity implements SettingContrac
         btnSetting.setEnabled(true);
 
         Toast.makeText(this, code + " - " + message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLogMessageType(String type) {
+        tvProcess.append(" " + type);
     }
 
     @Override

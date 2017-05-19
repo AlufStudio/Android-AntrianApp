@@ -11,6 +11,7 @@ import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncedEv
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingCreatedSyncingEvent;
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingDeletedEvent;
 import com.abdymalikmulky.settingqueue.app.events.setting.SettingFetchedEvent;
+import com.abdymalikmulky.settingqueue.app.events.setting.SettingFetchingEvent;
 import com.abdymalikmulky.settingqueue.app.jobs.CreateSettingJob;
 import com.abdymalikmulky.settingqueue.app.jobs.FetchSettingByPondJob;
 import com.birbit.android.jobqueue.JobManager;
@@ -26,14 +27,14 @@ import timber.log.Timber;
 //lagi lagi dibutuhkannya dagger
 public class SettingPresenter implements SettingContract.Presenter {
 
-    SettingContract.View mSettingView;
+    private SettingContract.View mSettingView;
 
-    JobManager jobManager;
+    private JobManager jobManager;
 
 
-    SettingLocal settingLocal;
-    SettingRemote settingRemote;
-    SettingFeeder settingFeeder;
+    private SettingLocal settingLocal;
+    private SettingRemote settingRemote;
+    private SettingFeeder settingFeeder;
 
     public SettingPresenter(SettingContract.View settingView, JobManager jobManager, FeederApiClient feederApiClient) {
         this.jobManager = jobManager;
@@ -81,7 +82,34 @@ public class SettingPresenter implements SettingContract.Presenter {
     }
 
     @Override
+    public void loadSettingNotSynced(final long pondId) {
+        settingLocal.getNotSynced(pondId, new SettingDataSource.LoadSettingCallback() {
+            @Override
+            public void onLoaded(List<Setting> settings) {
+                for (Setting setting : settings) {
+                    try {
+                        saveSetting(pondId, setting);
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onNoData(String msg) {
+
+            }
+
+            @Override
+            public void onFailed(Throwable t) throws Throwable {
+
+            }
+        });
+    }
+
+    @Override
     public void loadSettingRemote(long pondId) {
+        loadSettingNotSynced(pondId);
         jobManager.addJobInBackground(new FetchSettingByPondJob(pondId));
     }
 
@@ -141,16 +169,19 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     @Override
     public void saveSetting(long pondId, Setting setting) throws Throwable {
+        setting.setPondId(pondId);
         jobManager.addJobInBackground(new CreateSettingJob(setting));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingCreatedSyncingEvent settingEvent) {
         loadSetting(settingEvent.getSetting().getPondId());
+        showLogType("Save on local , data : " + settingEvent.getSetting().getFeedWeight());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingCreatedSyncedEvent settingEvent) {
         loadSetting(settingEvent.getSetting().getPondId());
+        showLogType("Save on remote, data : " + settingEvent.getSetting().getFeedWeight());
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingDeletedEvent settingEvent) {
@@ -159,6 +190,18 @@ public class SettingPresenter implements SettingContract.Presenter {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SettingFetchedEvent settingEvent) {
         loadSetting(settingEvent.getPondId());
+        showLogType("Fetch Remote, data : " + settingEvent.getPondId());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SettingFetchingEvent settingEvent) {
+        loadSetting(settingEvent.getPondId());
+        showLogType("Fetch local, data : " + settingEvent.getPondId());
+    }
+
+
+    //For Logging Lebih Kontekstual
+    private void showLogType(String type) {
+        mSettingView.showLogMessageType(type);
+    }
 }

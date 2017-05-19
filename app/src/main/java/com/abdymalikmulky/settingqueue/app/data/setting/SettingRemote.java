@@ -17,7 +17,7 @@ import timber.log.Timber;
  */
 
 public class SettingRemote implements SettingDataSource {
-    SettingApi api;
+    private SettingApi api;
 
     public SettingRemote() {
         api = ApiHelper.client().create(SettingApi.class);
@@ -29,11 +29,13 @@ public class SettingRemote implements SettingDataSource {
         call.enqueue(new Callback<SettingResponse>() {
             @Override
             public void onResponse(Call<SettingResponse> call, Response<SettingResponse> response) {
-                List<Setting> settings = response.body().getSettings();
-                if(settings.size() > 0){
-                    callback.onLoaded(settings);
-                }else{
-                    callback.onNoData("No Data");
+                if (response.isSuccessful()) {
+                    List<Setting> settings = response.body().getSettings();
+                    if (settings.size() > 0) {
+                        callback.onLoaded(settings);
+                    } else {
+                        callback.onNoData("No Data");
+                    }
                 }
             }
             @Override

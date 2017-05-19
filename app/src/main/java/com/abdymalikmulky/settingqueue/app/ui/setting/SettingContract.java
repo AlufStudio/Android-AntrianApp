@@ -16,9 +16,13 @@ public interface SettingContract {
         void showSettingFeeder(Setting setting);
 
         void showFailSetting(int code, String message);
+
+        void showLogMessageType(String type);
     }
     interface Presenter extends BasePresenter {
         void loadSetting(long pondId);
+
+        void loadSettingNotSynced(long pondId);
 
         void loadSettingRemote(long pondId);
 
